@@ -1,8 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Data.SqlClient;
 using System.Linq;
 using System.Web;
 using System.Web.Mvc;
+using TestWebApplication.Models;
+
 
 namespace TestWebApplication.Controllers
 {
@@ -15,9 +18,16 @@ namespace TestWebApplication.Controllers
 
         public ActionResult About()
         {
-            ViewBag.Message = "Your application description page.";
+            TestDatabaseEntities context = new TestDatabaseEntities();
 
-            return View();
+
+            var model = new User();
+            model.FirstName = context.Users.Where(x => x.UserID == 1).FirstOrDefault().FirstName;
+            model.LastName = context.Users.Where(x => x.UserID == 1).FirstOrDefault().LastName;
+            model.Email = context.Users.Where(x => x.UserID == 1).FirstOrDefault().Email;
+            ViewBag.Message = "THis is a test.";
+
+            return View(model);
         }
 
         public ActionResult Contact()
