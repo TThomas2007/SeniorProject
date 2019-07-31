@@ -25,7 +25,7 @@ namespace TestWebApplication.Controllers
             model.FirstName = context.Users.Where(x => x.UserID == 1).FirstOrDefault().FirstName;
             model.LastName = context.Users.Where(x => x.UserID == 1).FirstOrDefault().LastName;
             model.Email = context.Users.Where(x => x.UserID == 1).FirstOrDefault().Email;
-            ViewBag.Message = "THis is a test.";
+            ViewBag.Message = "This is a test.";
 
             return View(model);
         }
@@ -35,6 +35,25 @@ namespace TestWebApplication.Controllers
             ViewBag.Message = "Your contact page.";
 
             return View();
+        }
+        public ActionResult CreateUser()
+        {
+            ViewBag.Message = "Create New Account.";
+
+            return View();
+        }
+
+        [HttpPost]
+        public ActionResult CreateUser(UserModel user)
+        {
+            TestDatabaseEntities context = new TestDatabaseEntities();
+
+
+            context.Insert_User(user.UserLogin.Username, user.UserLogin.Password, user.UserLogin.Email);
+            
+            
+
+            return RedirectToAction("Index");
         }
     }
 }
