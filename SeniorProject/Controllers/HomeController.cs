@@ -93,8 +93,9 @@ namespace TestWebApplication.Controllers
         {
             if (Session["UserName"] != null || Session["UserID"] != null)
             {
-                Session["UserName"] = null;
-                Session["UserID"] = null;
+                //Session["UserName"] = null;
+                //Session["UserID"] = null;
+                Session.Abandon();
 
             }
             return RedirectToAction("Index");

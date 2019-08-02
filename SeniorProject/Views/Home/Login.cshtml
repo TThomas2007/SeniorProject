@@ -60,9 +60,7 @@
                 <td>
                     @Html.TextBoxFor(m => m.UserLogin.Username)
                 </td>
-                <td>
-                    @Html.ValidationMessageFor(m => m.UserLogin.Username, "", new { @class = "error" })
-                </td>
+
             </tr>
             <tr>
                 <td>
@@ -71,9 +69,7 @@
                 <td>
                     @Html.PasswordFor(m => m.UserLogin.Password)
                 </td>
-                <td>
-                    @Html.ValidationMessageFor(m => m.UserLogin.Password, "", new { @class = "error" })
-                </td>
+
             </tr>
             <tr>
                 <td>
@@ -82,16 +78,11 @@
                 <td>
                     @Html.CheckBoxFor(m => m.RememberMe)
                 </td>
-                <td></td>
+
             </tr>
-            <tr>
-                <td></td>
-                <td>
-                    <input type="submit" value="Submit" />
-                </td>
-                <td></td>
-            </tr>
+            
         </table>
+        <input type="submit" value="Submit" />
     }
     <p>Need an account? Click @Html.ActionLink("HERE", "CreateUser", "Home") to create one!</p>
 
