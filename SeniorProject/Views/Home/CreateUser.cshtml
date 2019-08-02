@@ -1,0 +1,88 @@
+﻿@model TestWebApplication.Models.UserModel
+
+@{
+    ViewBag.Title = "Login Page";
+}
+
+<!DOCTYPE html>
+
+<html>
+<head>
+    <meta name="viewport" content="width=device-width" />
+    <title>Index</title>
+    
+</head>
+<body>
+    @using (Html.BeginForm("CreateUser", "Home", FormMethod.Post))
+    {
+        <table border="0" cellpadding="0" cellspacing="0">
+            <tr>
+                <th colspan="3">
+                    Registration
+                </th>
+            </tr>
+            <tr>
+                <td>
+                    Username
+                </td>
+                <td>
+                   @Html.TextBoxFor(m => m.UserLogin.Username)
+                </td>
+                <td>
+                    @Html.ValidationMessageFor(m => m.UserLogin.Username, "", new { @class = "error" })
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    Password
+                </td>
+                <td>
+                    @Html.PasswordFor(m => m.UserLogin.Password)
+                </td>
+                <td>
+                    @Html.ValidationMessageFor(m => m.UserLogin.Password, "", new { @class = "error" })
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    Confirm Password
+                </td>
+                <td>
+                    @Html.PasswordFor(m => m.confirmPassword)
+                </td>
+                <td>
+                    @Html.ValidationMessageFor(m => m.confirmPassword, "", new { @class = "error" })
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    Email
+                </td>
+                <td>
+                    @Html.TextBoxFor(m => m.UserLogin.Email)
+                </td>
+                <td>
+                    @Html.ValidationMessageFor(m => m.UserLogin.Email, "", new { @class = "error" })
+                </td>
+            </tr>
+            <tr>
+                <td></td>
+                <td>
+                    <input type="submit" value="Submit" />
+                </td>
+                <td></td>
+            </tr>
+        </table>
+    }
+    @Scripts.Render("~/bundles/jquery")
+    @Scripts.Render("~/bundles/jqueryval")
+    @if (@ViewBag.Message != null)
+    {
+        <script type="text/javascript">
+            $(function () {
+                alert("@ViewBag.Message")
+            });
+        </script>
+    }
+</body>
+</html>
