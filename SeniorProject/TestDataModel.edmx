@@ -89,27 +89,22 @@ warning 6002: The table/view 'TestDatabase.sys.database_firewall_rules' does not
     <edmx:ConceptualModels>
       <Schema Namespace="TestDatabaseModel" Alias="Self" annotation:UseStrongSpatialTypes="false" xmlns:annotation="http://schemas.microsoft.com/ado/2009/02/edm/annotation" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm">
         <EntityContainer Name="TestDatabaseEntities" annotation:LazyLoadingEnabled="true">
+          <EntitySet Name="Users" EntityType="TestDatabaseModel.User" />
+          <EntitySet Name="UserLogins" EntityType="TestDatabaseModel.UserLogin" />
+          <EntitySet Name="database_firewall_rules" EntityType="TestDatabaseModel.database_firewall_rules" />
           <FunctionImport Name="GetUser" ReturnType="Collection(TestDatabaseModel.GetUser_Result)">
-          <Parameter Name="UserID" Mode="In" Type="Int32" />
+            <Parameter Name="UserID" Mode="In" Type="Int32" />
           </FunctionImport>
           <FunctionImport Name="Insert_User" ReturnType="Collection(Int32)">
             <Parameter Name="Username" Mode="In" Type="String" />
             <Parameter Name="Password" Mode="In" Type="String" />
             <Parameter Name="Email" Mode="In" Type="String" />
           </FunctionImport>
-          <EntitySet Name="Users" EntityType="TestDatabaseModel.User" />
-          <EntitySet Name="UserLogins" EntityType="TestDatabaseModel.UserLogin" />
-          <EntitySet Name="database_firewall_rules" EntityType="TestDatabaseModel.database_firewall_rules" />
-          <FunctionImport Name="Validate_User">
+          <FunctionImport Name="Validate_User" ReturnType="Collection(Int32)">
             <Parameter Name="Username" Mode="In" Type="String" />
             <Parameter Name="Password" Mode="In" Type="String" />
           </FunctionImport>
         </EntityContainer>
-        <ComplexType Name="GetUser_Result">
-          <Property Type="String" Name="FirstName" Nullable="false" MaxLength="50" />
-          <Property Type="String" Name="LastName" Nullable="false" MaxLength="50" />
-          <Property Type="String" Name="Email" Nullable="false" MaxLength="50" />
-        </ComplexType>
         <EntityType Name="User">
           <Key>
             <PropertyRef Name="UserID" />
@@ -150,22 +145,17 @@ warning 6002: The table/view 'TestDatabase.sys.database_firewall_rules' does not
           <Property Name="create_date" Type="DateTime" Nullable="false" Precision="3" />
           <Property Name="modify_date" Type="DateTime" Nullable="false" Precision="3" />
         </EntityType>
+        <ComplexType Name="GetUser_Result">
+          <Property Type="String" Name="FirstName" Nullable="false" MaxLength="50" />
+          <Property Type="String" Name="LastName" Nullable="false" MaxLength="50" />
+          <Property Type="String" Name="Email" Nullable="false" MaxLength="50" />
+        </ComplexType>
       </Schema>
     </edmx:ConceptualModels>
     <!-- C-S mapping content -->
     <edmx:Mappings>
       <Mapping Space="C-S" xmlns="http://schemas.microsoft.com/ado/2009/11/mapping/cs">
         <EntityContainerMapping StorageEntityContainer="TestDatabaseModelStoreContainer" CdmEntityContainer="TestDatabaseEntities">
-          <FunctionImportMapping FunctionImportName="GetUser" FunctionName="TestDatabaseModel.Store.GetUser">
-            <ResultMapping>
-              <ComplexTypeMapping TypeName="TestDatabaseModel.GetUser_Result">
-                <ScalarProperty Name="FirstName" ColumnName="FirstName" />
-                <ScalarProperty Name="LastName" ColumnName="LastName" />
-                <ScalarProperty Name="Email" ColumnName="Email" />
-              </ComplexTypeMapping>
-            </ResultMapping>
-          </FunctionImportMapping>
-          <FunctionImportMapping FunctionImportName="Insert_User" FunctionName="TestDatabaseModel.Store.Insert_User" />
           <EntitySetMapping Name="Users">
             <EntityTypeMapping TypeName="TestDatabaseModel.User">
               <MappingFragment StoreEntitySet="User">
@@ -200,6 +190,16 @@ warning 6002: The table/view 'TestDatabase.sys.database_firewall_rules' does not
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>
+          <FunctionImportMapping FunctionImportName="GetUser" FunctionName="TestDatabaseModel.Store.GetUser">
+            <ResultMapping>
+              <ComplexTypeMapping TypeName="TestDatabaseModel.GetUser_Result">
+                <ScalarProperty Name="FirstName" ColumnName="FirstName" />
+                <ScalarProperty Name="LastName" ColumnName="LastName" />
+                <ScalarProperty Name="Email" ColumnName="Email" />
+              </ComplexTypeMapping>
+            </ResultMapping>
+          </FunctionImportMapping>
+          <FunctionImportMapping FunctionImportName="Insert_User" FunctionName="TestDatabaseModel.Store.Insert_User" />
           <FunctionImportMapping FunctionImportName="Validate_User" FunctionName="TestDatabaseModel.Store.Validate_User" />
         </EntityContainerMapping>
       </Mapping>

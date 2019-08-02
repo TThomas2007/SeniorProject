@@ -1,9 +1,7 @@
 ﻿@model TestWebApplication.Models.UserModel
 
 
-@{
-    Layout = null;
-}
+
 
 <!DOCTYPE html>
 
@@ -41,6 +39,14 @@
 <body>
     @using (Html.BeginForm("Login", "Home", FormMethod.Post))
     {
+        @Html.AntiForgeryToken()
+        @Html.ValidationSummary(true)
+        if (@ViewBag.Message != null)
+        {
+            <div style="border: 1px solid red">
+                @ViewBag.Message
+            </div>
+        }
         <table border="0" cellpadding="0" cellspacing="0">
             <tr>
                 <th colspan="3">
@@ -87,15 +93,10 @@
             </tr>
         </table>
     }
+    <p>Need an account? Click @Html.ActionLink("HERE", "CreateUser", "Home") to create one!</p>
+
     @Scripts.Render("~/bundles/jquery")
     @Scripts.Render("~/bundles/jqueryval")
-    @if (@ViewBag.Message != null)
-    {
-        <script type="text/javascript">
-            $(function () {
-                alert("@ViewBag.Message")
-            });
-        </script>
-    }
+
 </body>
 </html>

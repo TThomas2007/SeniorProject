@@ -5,6 +5,7 @@ using System.Linq;
 using System.Web;
 using System.Web.Mvc;
 using TestWebApplication.Models;
+using System.Web.Security;
 
 
 namespace TestWebApplication.Controllers
@@ -18,27 +19,18 @@ namespace TestWebApplication.Controllers
 
         public ActionResult About()
         {
-            TestDatabaseEntities context = new TestDatabaseEntities();
 
-
-            var model = new User();
-            model.FirstName = context.Users.Where(x => x.UserID == 1).FirstOrDefault().FirstName;
-            model.LastName = context.Users.Where(x => x.UserID == 1).FirstOrDefault().LastName;
-            model.Email = context.Users.Where(x => x.UserID == 1).FirstOrDefault().Email;
-            ViewBag.Message = "This is a test.";
-
-            return View(model);
+            return View();
         }
 
         public ActionResult Contact()
         {
-            ViewBag.Message = "Your contact page.";
 
             return View();
         }
         public ActionResult CreateUser()
         {
-            ViewBag.Message = "Create New Account.";
+            
 
             return View();
         }
@@ -53,6 +45,58 @@ namespace TestWebApplication.Controllers
             
             
 
+            return RedirectToAction("Index");
+        }
+        public ActionResult Login()
+        {
+            return View();
+        }
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public ActionResult Login(UserModel user)
+        {
+            TestDatabaseEntities context = new TestDatabaseEntities();
+
+
+            var obj = context.UserLogins.Where(x => x.Username.Equals(user.UserLogin.Username) && x.Password.Equals(user.UserLogin.Password)).FirstOrDefault();
+            if(obj != null)
+            {
+                Session["UserID"] = obj.UserID.ToString();
+                Session["UserName"] = obj.Username.ToString();
+                return RedirectToAction("ProfilePage");
+            }
+            else
+            {
+                ViewBag.Message = "Username/Password combo incorrect. Please try again";
+            }
+
+            return View(user);
+
+
+        }
+
+        
+        public ActionResult ProfilePage()
+        {
+            if (Session["UserID"] != null)
+            {
+                return View();
+            }
+            else
+            {
+                return RedirectToAction("Login");
+            }
+            
+        }
+        
+        public ActionResult Logout()
+        {
+            if (Session["UserName"] != null || Session["UserID"] != null)
+            {
+                Session["UserName"] = null;
+                Session["UserID"] = null;
+
+            }
             return RedirectToAction("Index");
         }
     }
