@@ -5,6 +5,22 @@
     <!-- SSDL content -->
     <edmx:StorageModels>
     <Schema Namespace="TestDatabaseModel.Store" Provider="System.Data.SqlClient" ProviderManifestToken="2012.Azure" Alias="Self" xmlns:store="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm/ssdl">
+        <!--Errors Found During Generation:
+warning 6002: The table/view 'TestDatabase.dbo.Resumes' does not have a primary key defined. The key has been inferred and the definition was created as a read-only table/view.-->
+        <EntityType Name="Resumes">
+          <Key>
+            <PropertyRef Name="FileID" />
+            <PropertyRef Name="UserID" />
+            <PropertyRef Name="FileContent" />
+            <PropertyRef Name="UploadDate" />
+            <PropertyRef Name="FileSize" />
+          </Key>
+          <Property Name="FileID" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="UserID" Type="int" Nullable="false" />
+          <Property Name="FileContent" Type="varbinary(max)" Nullable="false" />
+          <Property Name="UploadDate" Type="datetime" Nullable="false" />
+          <Property Name="FileSize" Type="int" Nullable="false" />
+        </EntityType>
         <EntityType Name="User">
           <Key>
             <PropertyRef Name="UserID" />
@@ -23,13 +39,17 @@ warning 6002: The table/view 'TestDatabase.dbo.UserLogin' does not have a primar
             <PropertyRef Name="Password" />
             <PropertyRef Name="Email" />
             <PropertyRef Name="CreateDate" />
+            <PropertyRef Name="IsEmailConfirmed" />
           </Key>
           <Property Name="UserID" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
-          <Property Name="Username" Type="nvarchar" MaxLength="30" Nullable="false" />
-          <Property Name="Password" Type="nvarchar" MaxLength="30" Nullable="false" />
-          <Property Name="Email" Type="nvarchar" MaxLength="30" Nullable="false" />
+          <Property Name="Username" Type="nvarchar" MaxLength="200" Nullable="false" />
+          <Property Name="Password" Type="nvarchar(max)" Nullable="false" />
+          <Property Name="Email" Type="nvarchar" MaxLength="200" Nullable="false" />
           <Property Name="CreateDate" Type="datetime" Nullable="false" />
           <Property Name="LoginDate" Type="datetime" />
+          <Property Name="IsEmailConfirmed" Type="bit" Nullable="false" />
+          <Property Name="ResetPasswordCode" Type="nchar" MaxLength="100" />
+          <Property Name="ActivationCode" Type="uniqueidentifier" />
         </EntityType>
         <!--Errors Found During Generation:
 warning 6002: The table/view 'TestDatabase.sys.database_firewall_rules' does not have a primary key defined. The key has been inferred and the definition was created as a read-only table/view.-->
@@ -49,13 +69,26 @@ warning 6002: The table/view 'TestDatabase.sys.database_firewall_rules' does not
           <Property Name="create_date" Type="datetime" Nullable="false" />
           <Property Name="modify_date" Type="datetime" Nullable="false" />
         </EntityType>
+        <Function Name="ConfirmEmail" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
+          <Parameter Name="UserID" Type="int" Mode="In" />
+        </Function>
+        <Function Name="GetEmailFromUserID" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
+          <Parameter Name="UserID" Type="int" Mode="In" />
+        </Function>
+        <Function Name="GetHighestUserID" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo" />
         <Function Name="GetUser" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
           <Parameter Name="UserID" Type="int" Mode="In" />
         </Function>
         <Function Name="Insert_User" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
           <Parameter Name="Username" Type="nvarchar" Mode="In" />
-          <Parameter Name="Password" Type="nvarchar" Mode="In" />
+          <Parameter Name="Password" Type="nvarchar(max)" Mode="In" />
           <Parameter Name="Email" Type="nvarchar" Mode="In" />
+          <Parameter Name="ActivationCode" Type="uniqueidentifier" Mode="In" />
+        </Function>
+        <Function Name="Upload_Resume" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
+          <Parameter Name="UserID" Type="int" Mode="In" />
+          <Parameter Name="File" Type="varbinary(max)" Mode="In" />
+          <Parameter Name="FileSize" Type="int" Mode="In" />
         </Function>
         <Function Name="Validate_User" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
           <Parameter Name="Username" Type="nvarchar" Mode="In" />
@@ -63,6 +96,15 @@ warning 6002: The table/view 'TestDatabase.sys.database_firewall_rules' does not
         </Function>
         <EntityContainer Name="TestDatabaseModelStoreContainer">
           <EntitySet Name="User" EntityType="Self.User" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="Resumes" EntityType="Self.Resumes" store:Type="Tables" store:Schema="dbo">
+            <DefiningQuery>SELECT 
+    [Resumes].[FileID] AS [FileID], 
+    [Resumes].[UserID] AS [UserID], 
+    [Resumes].[FileContent] AS [FileContent], 
+    [Resumes].[UploadDate] AS [UploadDate], 
+    [Resumes].[FileSize] AS [FileSize]
+    FROM [dbo].[Resumes] AS [Resumes]</DefiningQuery>
+          </EntitySet>
           <EntitySet Name="UserLogin" EntityType="Self.UserLogin" store:Type="Tables" store:Schema="dbo">
             <DefiningQuery>SELECT 
     [UserLogin].[UserID] AS [UserID], 
@@ -70,7 +112,10 @@ warning 6002: The table/view 'TestDatabase.sys.database_firewall_rules' does not
     [UserLogin].[Password] AS [Password], 
     [UserLogin].[Email] AS [Email], 
     [UserLogin].[CreateDate] AS [CreateDate], 
-    [UserLogin].[LoginDate] AS [LoginDate]
+    [UserLogin].[LoginDate] AS [LoginDate], 
+    [UserLogin].[IsEmailConfirmed] AS [IsEmailConfirmed], 
+    [UserLogin].[ResetPasswordCode] AS [ResetPasswordCode], 
+    [UserLogin].[ActivationCode] AS [ActivationCode]
     FROM [dbo].[UserLogin] AS [UserLogin]</DefiningQuery>
           </EntitySet>
           <EntitySet Name="database_firewall_rules" EntityType="Self.database_firewall_rules" store:Type="Views" store:Schema="sys">
@@ -90,19 +135,33 @@ warning 6002: The table/view 'TestDatabase.sys.database_firewall_rules' does not
       <Schema Namespace="TestDatabaseModel" Alias="Self" annotation:UseStrongSpatialTypes="false" xmlns:annotation="http://schemas.microsoft.com/ado/2009/02/edm/annotation" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm">
         <EntityContainer Name="TestDatabaseEntities" annotation:LazyLoadingEnabled="true">
           <EntitySet Name="Users" EntityType="TestDatabaseModel.User" />
+          <EntitySet Name="Resumes" EntityType="TestDatabaseModel.Resume" />
           <EntitySet Name="UserLogins" EntityType="TestDatabaseModel.UserLogin" />
           <EntitySet Name="database_firewall_rules" EntityType="TestDatabaseModel.database_firewall_rules" />
+          <FunctionImport Name="GetEmailFromUserID" ReturnType="Collection(String)">
+          <Parameter Name="UserID" Mode="In" Type="Int32" />
+          </FunctionImport>
           <FunctionImport Name="GetUser" ReturnType="Collection(TestDatabaseModel.GetUser_Result)">
-            <Parameter Name="UserID" Mode="In" Type="Int32" />
+          <Parameter Name="UserID" Mode="In" Type="Int32" />
           </FunctionImport>
           <FunctionImport Name="Insert_User" ReturnType="Collection(Int32)">
             <Parameter Name="Username" Mode="In" Type="String" />
             <Parameter Name="Password" Mode="In" Type="String" />
             <Parameter Name="Email" Mode="In" Type="String" />
+            <Parameter Name="ActivationCode" Mode="In" Type="Guid" />
+          </FunctionImport>
+          <FunctionImport Name="Upload_Resume">
+            <Parameter Name="UserID" Mode="In" Type="Int32" />
+            <Parameter Name="File" Mode="In" Type="Binary" />
+            <Parameter Name="FileSize" Mode="In" Type="Int32" />
           </FunctionImport>
           <FunctionImport Name="Validate_User" ReturnType="Collection(Int32)">
             <Parameter Name="Username" Mode="In" Type="String" />
             <Parameter Name="Password" Mode="In" Type="String" />
+          </FunctionImport>
+          <FunctionImport Name="GetHighestUserID" ReturnType="Collection(Int32)" />
+          <FunctionImport Name="ConfirmEmail">
+            <Parameter Name="UserID" Mode="In" Type="Int32" />
           </FunctionImport>
         </EntityContainer>
         <EntityType Name="User">
@@ -114,6 +173,20 @@ warning 6002: The table/view 'TestDatabase.sys.database_firewall_rules' does not
           <Property Name="LastName" Type="String" Nullable="false" MaxLength="50" FixedLength="false" Unicode="false" />
           <Property Name="Email" Type="String" Nullable="false" MaxLength="50" FixedLength="false" Unicode="false" />
         </EntityType>
+        <EntityType Name="Resume">
+          <Key>
+            <PropertyRef Name="FileID" />
+            <PropertyRef Name="UserID" />
+            <PropertyRef Name="FileContent" />
+            <PropertyRef Name="UploadDate" />
+            <PropertyRef Name="FileSize" />
+          </Key>
+          <Property Name="FileID" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="UserID" Type="Int32" Nullable="false" />
+          <Property Name="FileContent" Type="Binary" Nullable="false" MaxLength="Max" FixedLength="false" />
+          <Property Name="UploadDate" Type="DateTime" Nullable="false" Precision="3" />
+          <Property Name="FileSize" Type="Int32" Nullable="false" />
+        </EntityType>
         <EntityType Name="UserLogin">
           <Key>
             <PropertyRef Name="UserID" />
@@ -121,13 +194,17 @@ warning 6002: The table/view 'TestDatabase.sys.database_firewall_rules' does not
             <PropertyRef Name="Password" />
             <PropertyRef Name="Email" />
             <PropertyRef Name="CreateDate" />
+            <PropertyRef Name="IsEmailConfirmed" />
           </Key>
           <Property Name="UserID" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
-          <Property Name="Username" Type="String" Nullable="false" MaxLength="30" FixedLength="false" Unicode="true" />
-          <Property Name="Password" Type="String" Nullable="false" MaxLength="30" FixedLength="false" Unicode="true" />
-          <Property Name="Email" Type="String" Nullable="false" MaxLength="30" FixedLength="false" Unicode="true" />
+          <Property Name="Username" Type="String" Nullable="false" MaxLength="200" FixedLength="false" Unicode="true" />
+          <Property Name="Password" Type="String" Nullable="false" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="Email" Type="String" Nullable="false" MaxLength="200" FixedLength="false" Unicode="true" />
           <Property Name="CreateDate" Type="DateTime" Nullable="false" Precision="3" />
           <Property Name="LoginDate" Type="DateTime" Precision="3" />
+          <Property Name="IsEmailConfirmed" Type="Boolean" Nullable="false" />
+          <Property Name="ResetPasswordCode" Type="String" MaxLength="100" FixedLength="true" Unicode="true" />
+          <Property Name="ActivationCode" Type="Guid" />
         </EntityType>
         <EntityType Name="database_firewall_rules">
           <Key>
@@ -166,9 +243,23 @@ warning 6002: The table/view 'TestDatabase.sys.database_firewall_rules' does not
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>
+          <EntitySetMapping Name="Resumes">
+            <EntityTypeMapping TypeName="TestDatabaseModel.Resume">
+              <MappingFragment StoreEntitySet="Resumes">
+                <ScalarProperty Name="FileSize" ColumnName="FileSize" />
+                <ScalarProperty Name="UploadDate" ColumnName="UploadDate" />
+                <ScalarProperty Name="FileContent" ColumnName="FileContent" />
+                <ScalarProperty Name="UserID" ColumnName="UserID" />
+                <ScalarProperty Name="FileID" ColumnName="FileID" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
           <EntitySetMapping Name="UserLogins">
             <EntityTypeMapping TypeName="TestDatabaseModel.UserLogin">
               <MappingFragment StoreEntitySet="UserLogin">
+                <ScalarProperty Name="ActivationCode" ColumnName="ActivationCode" />
+                <ScalarProperty Name="ResetPasswordCode" ColumnName="ResetPasswordCode" />
+                <ScalarProperty Name="IsEmailConfirmed" ColumnName="IsEmailConfirmed" />
                 <ScalarProperty Name="LoginDate" ColumnName="LoginDate" />
                 <ScalarProperty Name="CreateDate" ColumnName="CreateDate" />
                 <ScalarProperty Name="Email" ColumnName="Email" />
@@ -190,6 +281,7 @@ warning 6002: The table/view 'TestDatabase.sys.database_firewall_rules' does not
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>
+          <FunctionImportMapping FunctionImportName="GetEmailFromUserID" FunctionName="TestDatabaseModel.Store.GetEmailFromUserID" />
           <FunctionImportMapping FunctionImportName="GetUser" FunctionName="TestDatabaseModel.Store.GetUser">
             <ResultMapping>
               <ComplexTypeMapping TypeName="TestDatabaseModel.GetUser_Result">
@@ -200,7 +292,10 @@ warning 6002: The table/view 'TestDatabase.sys.database_firewall_rules' does not
             </ResultMapping>
           </FunctionImportMapping>
           <FunctionImportMapping FunctionImportName="Insert_User" FunctionName="TestDatabaseModel.Store.Insert_User" />
+          <FunctionImportMapping FunctionImportName="Upload_Resume" FunctionName="TestDatabaseModel.Store.Upload_Resume" />
           <FunctionImportMapping FunctionImportName="Validate_User" FunctionName="TestDatabaseModel.Store.Validate_User" />
+          <FunctionImportMapping FunctionImportName="GetHighestUserID" FunctionName="TestDatabaseModel.Store.GetHighestUserID" />
+          <FunctionImportMapping FunctionImportName="ConfirmEmail" FunctionName="TestDatabaseModel.Store.ConfirmEmail" />
         </EntityContainerMapping>
       </Mapping>
     </edmx:Mappings>

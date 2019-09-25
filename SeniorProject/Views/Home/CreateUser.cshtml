@@ -1,7 +1,7 @@
 ﻿@model TestWebApplication.Models.UserModel
 
 @{
-    ViewBag.Title = "Login Page";
+    ViewBag.Title = "Create your account";
 }
 
 <!DOCTYPE html>
@@ -13,7 +13,7 @@
     
 </head>
 <body>
-    @using (Html.BeginForm("CreateUser", "Home", FormMethod.Post))
+    @using (Html.BeginForm("CreateUser", "Home", FormMethod.Post, new { enctype = "multipart/form-data" }))
     {
         <table border="0" cellpadding="0" cellspacing="0">
             <tr>
@@ -26,7 +26,7 @@
                     Username
                 </td>
                 <td>
-                   @Html.TextBoxFor(m => m.UserLogin.Username)
+                    @Html.TextBoxFor(m => m.UserLogin.Username)
                 </td>
                 <td>
                     @Html.ValidationMessageFor(m => m.UserLogin.Username, "", new { @class = "error" })
@@ -56,7 +56,7 @@
             </tr>
             <tr>
                 <td>
-                    Email
+                    @Html.LabelFor(m => m.UserLogin.Email, "Email")
                 </td>
                 <td>
                     @Html.TextBoxFor(m => m.UserLogin.Email)
@@ -65,14 +65,15 @@
                     @Html.ValidationMessageFor(m => m.UserLogin.Email, "", new { @class = "error" })
                 </td>
             </tr>
-            <tr>
-                <td></td>
-                <td>
-                    <input type="submit" value="Submit" />
-                </td>
-                <td></td>
-            </tr>
+            
         </table>
+        
+
+        <div class="form-group">
+            <div class="col-md-offset-2 col-md-10">
+                <input type="submit" value="Create" class="btn btn-default" />
+            </div>
+        </div>
     }
     @Scripts.Render("~/bundles/jquery")
     @Scripts.Render("~/bundles/jqueryval")

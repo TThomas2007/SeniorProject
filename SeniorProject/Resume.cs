@@ -12,16 +12,12 @@ namespace TestWebApplication
     using System;
     using System.Collections.Generic;
     
-    public partial class UserLogin
+    public partial class Resume
     {
+        public int FileID { get; set; }
         public int UserID { get; set; }
-        public string Username { get; set; }
-        public string Password { get; set; }
-        public string Email { get; set; }
-        public System.DateTime CreateDate { get; set; }
-        public Nullable<System.DateTime> LoginDate { get; set; }
-        public bool IsEmailConfirmed { get; set; }
-        public string ResetPasswordCode { get; set; }
-        public Nullable<System.Guid> ActivationCode { get; set; }
+        public byte[] FileContent { get; set; }
+        public System.DateTime UploadDate { get; set; }
+        public int FileSize { get; set; }
     }
 }

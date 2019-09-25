@@ -28,8 +28,18 @@ namespace TestWebApplication
         }
     
         public virtual DbSet<User> Users { get; set; }
+        public virtual DbSet<Resume> Resumes { get; set; }
         public virtual DbSet<UserLogin> UserLogins { get; set; }
         public virtual DbSet<database_firewall_rules> database_firewall_rules { get; set; }
+    
+        public virtual ObjectResult<string> GetEmailFromUserID(Nullable<int> userID)
+        {
+            var userIDParameter = userID.HasValue ?
+                new ObjectParameter("UserID", userID) :
+                new ObjectParameter("UserID", typeof(int));
+    
+            return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction<string>("GetEmailFromUserID", userIDParameter);
+        }
     
         public virtual ObjectResult<GetUser_Result> GetUser(Nullable<int> userID)
         {
@@ -40,7 +50,7 @@ namespace TestWebApplication
             return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction<GetUser_Result>("GetUser", userIDParameter);
         }
     
-        public virtual ObjectResult<Nullable<int>> Insert_User(string username, string password, string email)
+        public virtual ObjectResult<Nullable<int>> Insert_User(string username, string password, string email, Nullable<System.Guid> activationCode)
         {
             var usernameParameter = username != null ?
                 new ObjectParameter("Username", username) :
@@ -54,7 +64,28 @@ namespace TestWebApplication
                 new ObjectParameter("Email", email) :
                 new ObjectParameter("Email", typeof(string));
     
-            return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction<Nullable<int>>("Insert_User", usernameParameter, passwordParameter, emailParameter);
+            var activationCodeParameter = activationCode.HasValue ?
+                new ObjectParameter("ActivationCode", activationCode) :
+                new ObjectParameter("ActivationCode", typeof(System.Guid));
+    
+            return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction<Nullable<int>>("Insert_User", usernameParameter, passwordParameter, emailParameter, activationCodeParameter);
+        }
+    
+        public virtual int Upload_Resume(Nullable<int> userID, byte[] file, Nullable<int> fileSize)
+        {
+            var userIDParameter = userID.HasValue ?
+                new ObjectParameter("UserID", userID) :
+                new ObjectParameter("UserID", typeof(int));
+    
+            var fileParameter = file != null ?
+                new ObjectParameter("File", file) :
+                new ObjectParameter("File", typeof(byte[]));
+    
+            var fileSizeParameter = fileSize.HasValue ?
+                new ObjectParameter("FileSize", fileSize) :
+                new ObjectParameter("FileSize", typeof(int));
+    
+            return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction("Upload_Resume", userIDParameter, fileParameter, fileSizeParameter);
         }
     
         public virtual ObjectResult<Nullable<int>> Validate_User(string username, string password)
@@ -68,6 +99,20 @@ namespace TestWebApplication
                 new ObjectParameter("Password", typeof(string));
     
             return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction<Nullable<int>>("Validate_User", usernameParameter, passwordParameter);
+        }
+    
+        public virtual ObjectResult<Nullable<int>> GetHighestUserID()
+        {
+            return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction<Nullable<int>>("GetHighestUserID");
+        }
+    
+        public virtual int ConfirmEmail(Nullable<int> userID)
+        {
+            var userIDParameter = userID.HasValue ?
+                new ObjectParameter("UserID", userID) :
+                new ObjectParameter("UserID", typeof(int));
+    
+            return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction("ConfirmEmail", userIDParameter);
         }
     }
 }
