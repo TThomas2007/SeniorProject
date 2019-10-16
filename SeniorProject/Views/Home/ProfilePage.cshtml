@@ -14,7 +14,7 @@
 <body>
     <div>
         Welcome
-        <b>@Session["UserName"].ToString()</b>
+        <b>@User.Identity.Name</b>
         <br />
         <br />
         @Html.ActionLink("Logout", "Logout", "Home")

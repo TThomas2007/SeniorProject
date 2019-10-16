@@ -185,7 +185,9 @@
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
+    <Compile Include="Models\Enum.cs" />
     <Compile Include="Models\File.cs" />
+    <Compile Include="Models\NewPasswordModel.cs" />
     <Compile Include="Models\UserModel.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Resume.cs">
@@ -207,6 +209,9 @@
       <DependentUpon>TestDataModel.edmx</DependentUpon>
     </Compile>
     <Compile Include="User.cs">
+      <DependentUpon>TestDataModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="UserGroup.cs">
       <DependentUpon>TestDataModel.tt</DependentUpon>
     </Compile>
     <Compile Include="UserLogin.cs">
@@ -284,7 +289,9 @@
     <Content Include="Web.Release.config">
       <DependentUpon>Web.config</DependentUpon>
     </Content>
-    <Content Include="Views\Web.config" />
+    <Content Include="Views\Web.config">
+      <SubType>Designer</SubType>
+    </Content>
     <Content Include="Views\_ViewStart.cshtml" />
     <Content Include="Views\Shared\Error.cshtml" />
     <Content Include="Views\Shared\_Layout.cshtml" />
@@ -313,6 +320,7 @@
     <Content Include="Views\Home\ResetPassword.cshtml" />
     <Content Include="Views\Home\VerifyAccount.cshtml" />
     <Content Include="Views\Home\AccountSuccess.cshtml" />
+    <Content Include="Views\Home\ResetPasswordCodeValidation.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

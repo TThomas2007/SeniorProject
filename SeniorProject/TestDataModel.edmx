@@ -21,25 +21,30 @@ warning 6002: The table/view 'TestDatabase.dbo.Resumes' does not have a primary 
           <Property Name="UploadDate" Type="datetime" Nullable="false" />
           <Property Name="FileSize" Type="int" Nullable="false" />
         </EntityType>
+        <!--Errors Found During Generation:
+warning 6002: The table/view 'TestDatabase.dbo.User' does not have a primary key defined. The key has been inferred and the definition was created as a read-only table/view.-->
         <EntityType Name="User">
           <Key>
             <PropertyRef Name="UserID" />
+            <PropertyRef Name="FirstName" />
+            <PropertyRef Name="LastName" />
+            <PropertyRef Name="Email" />
           </Key>
           <Property Name="UserID" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
           <Property Name="FirstName" Type="varchar" MaxLength="50" Nullable="false" />
           <Property Name="LastName" Type="varchar" MaxLength="50" Nullable="false" />
           <Property Name="Email" Type="varchar" MaxLength="50" Nullable="false" />
         </EntityType>
-        <!--Errors Found During Generation:
-warning 6002: The table/view 'TestDatabase.dbo.UserLogin' does not have a primary key defined. The key has been inferred and the definition was created as a read-only table/view.-->
+        <EntityType Name="UserGroup">
+          <Key>
+            <PropertyRef Name="UserGroupID" />
+          </Key>
+          <Property Name="UserGroupID" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="Description" Type="varchar" MaxLength="50" Nullable="false" />
+        </EntityType>
         <EntityType Name="UserLogin">
           <Key>
             <PropertyRef Name="UserID" />
-            <PropertyRef Name="Username" />
-            <PropertyRef Name="Password" />
-            <PropertyRef Name="Email" />
-            <PropertyRef Name="CreateDate" />
-            <PropertyRef Name="IsEmailConfirmed" />
           </Key>
           <Property Name="UserID" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
           <Property Name="Username" Type="nvarchar" MaxLength="200" Nullable="false" />
@@ -50,6 +55,7 @@ warning 6002: The table/view 'TestDatabase.dbo.UserLogin' does not have a primar
           <Property Name="IsEmailConfirmed" Type="bit" Nullable="false" />
           <Property Name="ResetPasswordCode" Type="nchar" MaxLength="100" />
           <Property Name="ActivationCode" Type="uniqueidentifier" />
+          <Property Name="UserGroupID" Type="int" Nullable="false" />
         </EntityType>
         <!--Errors Found During Generation:
 warning 6002: The table/view 'TestDatabase.sys.database_firewall_rules' does not have a primary key defined. The key has been inferred and the definition was created as a read-only table/view.-->
@@ -69,6 +75,14 @@ warning 6002: The table/view 'TestDatabase.sys.database_firewall_rules' does not
           <Property Name="create_date" Type="datetime" Nullable="false" />
           <Property Name="modify_date" Type="datetime" Nullable="false" />
         </EntityType>
+        <Function Name="AddPasswordResetCode" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
+          <Parameter Name="Email" Type="nvarchar" Mode="In" />
+          <Parameter Name="ResetCode" Type="nvarchar" Mode="In" />
+        </Function>
+        <Function Name="ChangePassword" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
+          <Parameter Name="Password" Type="nvarchar" Mode="In" />
+          <Parameter Name="ResetCode" Type="nvarchar" Mode="In" />
+        </Function>
         <Function Name="ConfirmEmail" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
           <Parameter Name="UserID" Type="int" Mode="In" />
         </Function>
@@ -84,6 +98,7 @@ warning 6002: The table/view 'TestDatabase.sys.database_firewall_rules' does not
           <Parameter Name="Password" Type="nvarchar(max)" Mode="In" />
           <Parameter Name="Email" Type="nvarchar" Mode="In" />
           <Parameter Name="ActivationCode" Type="uniqueidentifier" Mode="In" />
+          <Parameter Name="UserGroupID" Type="int" Mode="In" />
         </Function>
         <Function Name="Upload_Resume" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
           <Parameter Name="UserID" Type="int" Mode="In" />
@@ -95,7 +110,8 @@ warning 6002: The table/view 'TestDatabase.sys.database_firewall_rules' does not
           <Parameter Name="Password" Type="nvarchar" Mode="In" />
         </Function>
         <EntityContainer Name="TestDatabaseModelStoreContainer">
-          <EntitySet Name="User" EntityType="Self.User" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="UserGroup" EntityType="Self.UserGroup" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="UserLogin" EntityType="Self.UserLogin" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="Resumes" EntityType="Self.Resumes" store:Type="Tables" store:Schema="dbo">
             <DefiningQuery>SELECT 
     [Resumes].[FileID] AS [FileID], 
@@ -105,18 +121,13 @@ warning 6002: The table/view 'TestDatabase.sys.database_firewall_rules' does not
     [Resumes].[FileSize] AS [FileSize]
     FROM [dbo].[Resumes] AS [Resumes]</DefiningQuery>
           </EntitySet>
-          <EntitySet Name="UserLogin" EntityType="Self.UserLogin" store:Type="Tables" store:Schema="dbo">
+          <EntitySet Name="User" EntityType="Self.User" store:Type="Tables" store:Schema="dbo">
             <DefiningQuery>SELECT 
-    [UserLogin].[UserID] AS [UserID], 
-    [UserLogin].[Username] AS [Username], 
-    [UserLogin].[Password] AS [Password], 
-    [UserLogin].[Email] AS [Email], 
-    [UserLogin].[CreateDate] AS [CreateDate], 
-    [UserLogin].[LoginDate] AS [LoginDate], 
-    [UserLogin].[IsEmailConfirmed] AS [IsEmailConfirmed], 
-    [UserLogin].[ResetPasswordCode] AS [ResetPasswordCode], 
-    [UserLogin].[ActivationCode] AS [ActivationCode]
-    FROM [dbo].[UserLogin] AS [UserLogin]</DefiningQuery>
+    [User].[UserID] AS [UserID], 
+    [User].[FirstName] AS [FirstName], 
+    [User].[LastName] AS [LastName], 
+    [User].[Email] AS [Email]
+    FROM [dbo].[User] AS [User]</DefiningQuery>
           </EntitySet>
           <EntitySet Name="database_firewall_rules" EntityType="Self.database_firewall_rules" store:Type="Views" store:Schema="sys">
             <DefiningQuery>SELECT 
@@ -134,21 +145,35 @@ warning 6002: The table/view 'TestDatabase.sys.database_firewall_rules' does not
     <edmx:ConceptualModels>
       <Schema Namespace="TestDatabaseModel" Alias="Self" annotation:UseStrongSpatialTypes="false" xmlns:annotation="http://schemas.microsoft.com/ado/2009/02/edm/annotation" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm">
         <EntityContainer Name="TestDatabaseEntities" annotation:LazyLoadingEnabled="true">
-          <EntitySet Name="Users" EntityType="TestDatabaseModel.User" />
-          <EntitySet Name="Resumes" EntityType="TestDatabaseModel.Resume" />
+          <EntitySet Name="UserGroups" EntityType="TestDatabaseModel.UserGroup" />
           <EntitySet Name="UserLogins" EntityType="TestDatabaseModel.UserLogin" />
+          <EntitySet Name="Resumes" EntityType="TestDatabaseModel.Resume" />
+          <EntitySet Name="Users" EntityType="TestDatabaseModel.User" />
           <EntitySet Name="database_firewall_rules" EntityType="TestDatabaseModel.database_firewall_rules" />
-          <FunctionImport Name="GetEmailFromUserID" ReturnType="Collection(String)">
-          <Parameter Name="UserID" Mode="In" Type="Int32" />
+          <FunctionImport Name="AddPasswordResetCode">
+            <Parameter Name="Email" Mode="In" Type="String" />
+            <Parameter Name="ResetCode" Mode="In" Type="String" />
           </FunctionImport>
+          <FunctionImport Name="ChangePassword">
+            <Parameter Name="Password" Mode="In" Type="String" />
+            <Parameter Name="ResetCode" Mode="In" Type="String" />
+          </FunctionImport>
+          <FunctionImport Name="ConfirmEmail">
+            <Parameter Name="UserID" Mode="In" Type="Int32" />
+          </FunctionImport>
+          <FunctionImport Name="GetEmailFromUserID" ReturnType="Collection(String)">
+            <Parameter Name="UserID" Mode="In" Type="Int32" />
+          </FunctionImport>
+          <FunctionImport Name="GetHighestUserID" ReturnType="Collection(Int32)" />
           <FunctionImport Name="GetUser" ReturnType="Collection(TestDatabaseModel.GetUser_Result)">
-          <Parameter Name="UserID" Mode="In" Type="Int32" />
+            <Parameter Name="UserID" Mode="In" Type="Int32" />
           </FunctionImport>
           <FunctionImport Name="Insert_User" ReturnType="Collection(Int32)">
             <Parameter Name="Username" Mode="In" Type="String" />
             <Parameter Name="Password" Mode="In" Type="String" />
             <Parameter Name="Email" Mode="In" Type="String" />
             <Parameter Name="ActivationCode" Mode="In" Type="Guid" />
+            <Parameter Name="UserGroupID" Mode="In" Type="Int32" />
           </FunctionImport>
           <FunctionImport Name="Upload_Resume">
             <Parameter Name="UserID" Mode="In" Type="Int32" />
@@ -159,19 +184,28 @@ warning 6002: The table/view 'TestDatabase.sys.database_firewall_rules' does not
             <Parameter Name="Username" Mode="In" Type="String" />
             <Parameter Name="Password" Mode="In" Type="String" />
           </FunctionImport>
-          <FunctionImport Name="GetHighestUserID" ReturnType="Collection(Int32)" />
-          <FunctionImport Name="ConfirmEmail">
-            <Parameter Name="UserID" Mode="In" Type="Int32" />
-          </FunctionImport>
         </EntityContainer>
-        <EntityType Name="User">
+        <EntityType Name="UserGroup">
+          <Key>
+            <PropertyRef Name="UserGroupID" />
+          </Key>
+          <Property Name="UserGroupID" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="Description" Type="String" Nullable="false" MaxLength="50" FixedLength="false" Unicode="false" />
+        </EntityType>
+        <EntityType Name="UserLogin">
           <Key>
             <PropertyRef Name="UserID" />
           </Key>
           <Property Name="UserID" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
-          <Property Name="FirstName" Type="String" Nullable="false" MaxLength="50" FixedLength="false" Unicode="false" />
-          <Property Name="LastName" Type="String" Nullable="false" MaxLength="50" FixedLength="false" Unicode="false" />
-          <Property Name="Email" Type="String" Nullable="false" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="Username" Type="String" Nullable="false" MaxLength="200" FixedLength="false" Unicode="true" />
+          <Property Name="Password" Type="String" Nullable="false" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="Email" Type="String" Nullable="false" MaxLength="200" FixedLength="false" Unicode="true" />
+          <Property Name="CreateDate" Type="DateTime" Nullable="false" Precision="3" />
+          <Property Name="LoginDate" Type="DateTime" Precision="3" />
+          <Property Name="IsEmailConfirmed" Type="Boolean" Nullable="false" />
+          <Property Name="ResetPasswordCode" Type="String" MaxLength="100" FixedLength="true" Unicode="true" />
+          <Property Name="ActivationCode" Type="Guid" />
+          <Property Name="UserGroupID" Type="Int32" Nullable="false" />
         </EntityType>
         <EntityType Name="Resume">
           <Key>
@@ -187,24 +221,17 @@ warning 6002: The table/view 'TestDatabase.sys.database_firewall_rules' does not
           <Property Name="UploadDate" Type="DateTime" Nullable="false" Precision="3" />
           <Property Name="FileSize" Type="Int32" Nullable="false" />
         </EntityType>
-        <EntityType Name="UserLogin">
+        <EntityType Name="User">
           <Key>
             <PropertyRef Name="UserID" />
-            <PropertyRef Name="Username" />
-            <PropertyRef Name="Password" />
+            <PropertyRef Name="FirstName" />
+            <PropertyRef Name="LastName" />
             <PropertyRef Name="Email" />
-            <PropertyRef Name="CreateDate" />
-            <PropertyRef Name="IsEmailConfirmed" />
           </Key>
           <Property Name="UserID" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
-          <Property Name="Username" Type="String" Nullable="false" MaxLength="200" FixedLength="false" Unicode="true" />
-          <Property Name="Password" Type="String" Nullable="false" MaxLength="Max" FixedLength="false" Unicode="true" />
-          <Property Name="Email" Type="String" Nullable="false" MaxLength="200" FixedLength="false" Unicode="true" />
-          <Property Name="CreateDate" Type="DateTime" Nullable="false" Precision="3" />
-          <Property Name="LoginDate" Type="DateTime" Precision="3" />
-          <Property Name="IsEmailConfirmed" Type="Boolean" Nullable="false" />
-          <Property Name="ResetPasswordCode" Type="String" MaxLength="100" FixedLength="true" Unicode="true" />
-          <Property Name="ActivationCode" Type="Guid" />
+          <Property Name="FirstName" Type="String" Nullable="false" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="LastName" Type="String" Nullable="false" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="Email" Type="String" Nullable="false" MaxLength="50" FixedLength="false" Unicode="false" />
         </EntityType>
         <EntityType Name="database_firewall_rules">
           <Key>
@@ -233,12 +260,26 @@ warning 6002: The table/view 'TestDatabase.sys.database_firewall_rules' does not
     <edmx:Mappings>
       <Mapping Space="C-S" xmlns="http://schemas.microsoft.com/ado/2009/11/mapping/cs">
         <EntityContainerMapping StorageEntityContainer="TestDatabaseModelStoreContainer" CdmEntityContainer="TestDatabaseEntities">
-          <EntitySetMapping Name="Users">
-            <EntityTypeMapping TypeName="TestDatabaseModel.User">
-              <MappingFragment StoreEntitySet="User">
+          <EntitySetMapping Name="UserGroups">
+            <EntityTypeMapping TypeName="TestDatabaseModel.UserGroup">
+              <MappingFragment StoreEntitySet="UserGroup">
+                <ScalarProperty Name="Description" ColumnName="Description" />
+                <ScalarProperty Name="UserGroupID" ColumnName="UserGroupID" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="UserLogins">
+            <EntityTypeMapping TypeName="TestDatabaseModel.UserLogin">
+              <MappingFragment StoreEntitySet="UserLogin">
+                <ScalarProperty Name="UserGroupID" ColumnName="UserGroupID" />
+                <ScalarProperty Name="ActivationCode" ColumnName="ActivationCode" />
+                <ScalarProperty Name="ResetPasswordCode" ColumnName="ResetPasswordCode" />
+                <ScalarProperty Name="IsEmailConfirmed" ColumnName="IsEmailConfirmed" />
+                <ScalarProperty Name="LoginDate" ColumnName="LoginDate" />
+                <ScalarProperty Name="CreateDate" ColumnName="CreateDate" />
                 <ScalarProperty Name="Email" ColumnName="Email" />
-                <ScalarProperty Name="LastName" ColumnName="LastName" />
-                <ScalarProperty Name="FirstName" ColumnName="FirstName" />
+                <ScalarProperty Name="Password" ColumnName="Password" />
+                <ScalarProperty Name="Username" ColumnName="Username" />
                 <ScalarProperty Name="UserID" ColumnName="UserID" />
               </MappingFragment>
             </EntityTypeMapping>
@@ -254,17 +295,12 @@ warning 6002: The table/view 'TestDatabase.sys.database_firewall_rules' does not
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>
-          <EntitySetMapping Name="UserLogins">
-            <EntityTypeMapping TypeName="TestDatabaseModel.UserLogin">
-              <MappingFragment StoreEntitySet="UserLogin">
-                <ScalarProperty Name="ActivationCode" ColumnName="ActivationCode" />
-                <ScalarProperty Name="ResetPasswordCode" ColumnName="ResetPasswordCode" />
-                <ScalarProperty Name="IsEmailConfirmed" ColumnName="IsEmailConfirmed" />
-                <ScalarProperty Name="LoginDate" ColumnName="LoginDate" />
-                <ScalarProperty Name="CreateDate" ColumnName="CreateDate" />
+          <EntitySetMapping Name="Users">
+            <EntityTypeMapping TypeName="TestDatabaseModel.User">
+              <MappingFragment StoreEntitySet="User">
                 <ScalarProperty Name="Email" ColumnName="Email" />
-                <ScalarProperty Name="Password" ColumnName="Password" />
-                <ScalarProperty Name="Username" ColumnName="Username" />
+                <ScalarProperty Name="LastName" ColumnName="LastName" />
+                <ScalarProperty Name="FirstName" ColumnName="FirstName" />
                 <ScalarProperty Name="UserID" ColumnName="UserID" />
               </MappingFragment>
             </EntityTypeMapping>
@@ -281,7 +317,11 @@ warning 6002: The table/view 'TestDatabase.sys.database_firewall_rules' does not
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>
+          <FunctionImportMapping FunctionImportName="AddPasswordResetCode" FunctionName="TestDatabaseModel.Store.AddPasswordResetCode" />
+          <FunctionImportMapping FunctionImportName="ChangePassword" FunctionName="TestDatabaseModel.Store.ChangePassword" />
+          <FunctionImportMapping FunctionImportName="ConfirmEmail" FunctionName="TestDatabaseModel.Store.ConfirmEmail" />
           <FunctionImportMapping FunctionImportName="GetEmailFromUserID" FunctionName="TestDatabaseModel.Store.GetEmailFromUserID" />
+          <FunctionImportMapping FunctionImportName="GetHighestUserID" FunctionName="TestDatabaseModel.Store.GetHighestUserID" />
           <FunctionImportMapping FunctionImportName="GetUser" FunctionName="TestDatabaseModel.Store.GetUser">
             <ResultMapping>
               <ComplexTypeMapping TypeName="TestDatabaseModel.GetUser_Result">
@@ -294,8 +334,6 @@ warning 6002: The table/view 'TestDatabase.sys.database_firewall_rules' does not
           <FunctionImportMapping FunctionImportName="Insert_User" FunctionName="TestDatabaseModel.Store.Insert_User" />
           <FunctionImportMapping FunctionImportName="Upload_Resume" FunctionName="TestDatabaseModel.Store.Upload_Resume" />
           <FunctionImportMapping FunctionImportName="Validate_User" FunctionName="TestDatabaseModel.Store.Validate_User" />
-          <FunctionImportMapping FunctionImportName="GetHighestUserID" FunctionName="TestDatabaseModel.Store.GetHighestUserID" />
-          <FunctionImportMapping FunctionImportName="ConfirmEmail" FunctionName="TestDatabaseModel.Store.ConfirmEmail" />
         </EntityContainerMapping>
       </Mapping>
     </edmx:Mappings>
