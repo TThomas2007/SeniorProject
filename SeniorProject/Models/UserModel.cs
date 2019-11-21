@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Web;
 
 namespace TestWebApplication.Models
@@ -15,8 +16,11 @@ namespace TestWebApplication.Models
         public string ResetPasswordCode { get; set; }
         public Nullable<System.Guid> ActivationCode { get; set; }
         public int UserGroupID { get; set; }
+        public int UserTypeID { get; set; }
         public UserGroup UserGroup { get; set; }
+        public UserType UserType { get; set; }
         public string confirmPassword { get; set; }
         public bool RememberMe { get; set; }
+        public List<Availability> AvailList { get; set; }
     }
 }

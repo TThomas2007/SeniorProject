@@ -17,7 +17,7 @@ namespace TestWebApplication.Controllers
     
     public class HomeController : Controller
     {
-        public ActionResult Index()
+        public ActionResult Home()
         {
             return View();
         }
@@ -25,11 +25,7 @@ namespace TestWebApplication.Controllers
         {
             return View();
         }
-        public ActionResult About()
-        {
-
-            return View();
-        }
+        
 
         public ActionResult Contact()
         {
@@ -50,15 +46,16 @@ namespace TestWebApplication.Controllers
             
             var activationCode = Guid.NewGuid();
             var passwordHash = Crypto.Hash(user.Password);
-            var obj = context.UserLogins.Where(x => x.Username.Equals(user.Username)).FirstOrDefault();
-            if (obj != null)
+            var obj1 = context.UserLogins.Where(x => x.Username.Equals(user.Username)).FirstOrDefault();
+            var obj2 = context.UserLogins.Where(x => x.Email.Equals(user.Email)).FirstOrDefault();
+            if (obj1 != null || obj2 != null)
             {
-                if (string.Compare(user.Username, obj.Username) == 0)
+                if (string.Compare(user.Username, obj1.Username) == 0)
                 {
                     ViewBag.message = "Username already exists. Please try again.";
                     return RedirectToAction("CreateUser");
                 }
-                if (string.Compare(user.Email, obj.Email) == 0)
+                if (string.Compare(user.Email, obj2.Email) == 0)
                 {
                     ViewBag.message = "Email already exists. Please try again.";
                     return RedirectToAction("CreateUser");
@@ -71,7 +68,7 @@ namespace TestWebApplication.Controllers
             }
             else
             {
-                context.Insert_User(user.Username, passwordHash, user.Email, activationCode, (int)user.UserGroup);
+                context.Insert_User(user.Username, passwordHash, user.Email, activationCode, (int)user.UserGroup, (int)user.UserType);
 
 
                 SendCodeEmail(user.Email, activationCode.ToString(), "verify");
@@ -214,9 +211,21 @@ namespace TestWebApplication.Controllers
        [Authorize]
         public ActionResult ProfilePage()
         {
+            TestDatabaseEntities context = new TestDatabaseEntities();
+            UserLogin user = context.UserLogins.Where(x => x.Username == User.Identity.Name).FirstOrDefault();
             if (User.Identity.IsAuthenticated)
             {
-                return View();
+                UserModel model = new UserModel();
+                model.UserID = user.UserID;
+                model.UserGroupID = user.UserGroupID;
+                model.UserTypeID = user.UserTypeID;
+                if(user.UserGroupID != 1)
+                {
+
+                    model.AvailList = context.Availabilities.Where(x => x.InstructorUserID == model.UserID).ToList();
+                }
+
+                return View(model);
             }
             else
             {
@@ -234,6 +243,49 @@ namespace TestWebApplication.Controllers
         {
             return View();
         }
+        public ActionResult Availability()
+        {
+            if (User.Identity.IsAuthenticated)
+            {
+                TestDatabaseEntities context = new TestDatabaseEntities();
+                UserLogin user = context.UserLogins.Where(x => x.Username == User.Identity.Name).FirstOrDefault();
+
+                AvailabilityModel model = new AvailabilityModel();
+                model.InstructorUserID = user.UserID;
+                model.UserTypeID = user.UserTypeID;
+                return View(model);
+            }
+            else
+            {
+                return RedirectToAction("Login");
+            }
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public ActionResult SetAvailability(AvailabilityModel user)
+        {
+
+            TestDatabaseEntities context = new TestDatabaseEntities();
+            context.InsertAvailablity(user.InstructorUserID, user.UserTypeID, user.DateTime);
+            ViewBag.message = "You have set your availabilty successfully. You can now add more times if you wish. " +
+                "Please return to your profile page to view availability times.";
+           
+            return RedirectToAction("Availability");
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public ActionResult RemoveAvail(int id)
+        {
+
+            TestDatabaseEntities context = new TestDatabaseEntities();
+            context.DeleteAvail(id);
+            ViewBag.message = "You have successfully deleted availabaility time.";
+
+            return RedirectToAction("ProfilePage");
+        }
+
         [HttpPost]
         [ValidateAntiForgeryToken]
         public ActionResult ResetPassword(string email)

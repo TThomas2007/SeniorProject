@@ -15,4 +15,14 @@ namespace TestWebApplication.Models
         [Display(Name = "Teacher(Interviewer)")]
         Teacher = 3
     }
+
+    public enum UserType
+    {
+        [Display(Name = "Software Development")]
+        Programming = 1,
+        [Display(Name = "Cyber Security")]
+        CyberSecurity= 2,
+        [Display(Name = "Networking")]
+        Networking = 3
+    }
 }

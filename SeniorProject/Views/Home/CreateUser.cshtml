@@ -9,7 +9,7 @@
 <html>
 <head>
     <meta name="viewport" content="width=device-width" />
-    <title>Index</title>
+    <title>Create User</title>
     
 </head>
 <body>
@@ -66,15 +66,27 @@
             </td>
         </tr>
         <tr>
-            
+
             <td>
                 @Html.LabelFor(m => m.UserGroup, "What type of user are you?")
             </td>
             <td>
-                @Html.EnumDropDownListFor(m => m.UserGroup);
+                @Html.EnumDropDownListFor(m => m.UserGroup)
             </td>
             <td>
                 @Html.ValidationMessageFor(m => m.UserGroup, "", new { @class = "error" })
+            </td>
+        </tr>
+        <tr>
+
+            <td>
+                @Html.LabelFor(m => m.UserType, "What field are you in?")
+            </td>
+            <td>
+                @Html.EnumDropDownListFor(m => m.UserType)
+            </td>
+            <td>
+                @Html.ValidationMessageFor(m => m.UserType, "", new { @class = "error" })
             </td>
         </tr>
 

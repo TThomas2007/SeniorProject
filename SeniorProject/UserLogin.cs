@@ -24,5 +24,6 @@ namespace TestWebApplication
         public string ResetPasswordCode { get; set; }
         public Nullable<System.Guid> ActivationCode { get; set; }
         public int UserGroupID { get; set; }
+        public int UserTypeID { get; set; }
     }
 }
