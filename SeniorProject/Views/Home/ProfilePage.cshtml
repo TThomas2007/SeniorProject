@@ -1,4 +1,6 @@
-﻿<!DOCTYPE html>
+﻿@model TestWebApplication.Models.UserModel
+@using TestWebApplication.Models
+<!DOCTYPE html>
 
 <html>
 <head>
@@ -14,8 +16,33 @@
 <body>
     <div>
         Welcome
-        <b>@Session["UserName"].ToString()</b>
+        <b>@User.Identity.Name</b>
         <br />
+        @if (Model.UserGroupID == 1)
+        {
+            @*<form action="@Url.Action("UploadResume", "Home", new { NoteId = Model.aut_id })" method="post" enctype="multipart/form-data">
+                <label for="file1"> File name:</label>
+                <input type="file" name="file" id="file1" />
+                <input type="submit" value="Submit" />
+            </form>*@
+        }
+        @if (Model.UserGroupID != 1)
+        {
+
+
+            @Html.ActionLink("Click Here to set your availability", "Availability", "Home")
+
+            foreach (var dt in Model.AvailList)
+            {
+                <br />
+                @dt.DateTime.ToString();
+                @:&nbsp;&nbsp;&nbsp;
+                @Html.ActionLink("Remove Date/Time From Availablity", "RemoveAvail", "Home", new { id = dt.AvailabilityID, @type = "button", @class = "ui-button-text" });
+                <br />
+
+            }
+        }
+
         <br />
         @Html.ActionLink("Logout", "Logout", "Home")
     </div>

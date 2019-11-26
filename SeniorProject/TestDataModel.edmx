@@ -5,31 +5,98 @@
     <!-- SSDL content -->
     <edmx:StorageModels>
     <Schema Namespace="TestDatabaseModel.Store" Provider="System.Data.SqlClient" ProviderManifestToken="2012.Azure" Alias="Self" xmlns:store="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm/ssdl">
+        <!--Errors Found During Generation:
+warning 6002: The table/view 'TestDatabase.dbo.Appointments' does not have a primary key defined. The key has been inferred and the definition was created as a read-only table/view.-->
+        <EntityType Name="Appointments">
+          <Key>
+            <PropertyRef Name="AppointmentID" />
+            <PropertyRef Name="StudentUserID" />
+            <PropertyRef Name="InstructorUserID" />
+            <PropertyRef Name="Time" />
+            <PropertyRef Name="IsConfirmed" />
+          </Key>
+          <Property Name="AppointmentID" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="StudentUserID" Type="int" Nullable="false" />
+          <Property Name="InstructorUserID" Type="int" Nullable="false" />
+          <Property Name="Time" Type="datetime2" Precision="7" Nullable="false" />
+          <Property Name="IsConfirmed" Type="bit" Nullable="false" />
+        </EntityType>
+        <!--Errors Found During Generation:
+warning 6002: The table/view 'TestDatabase.dbo.Availability' does not have a primary key defined. The key has been inferred and the definition was created as a read-only table/view.-->
+        <EntityType Name="Availability">
+          <Key>
+            <PropertyRef Name="AvailabilityID" />
+            <PropertyRef Name="InstructorUserID" />
+            <PropertyRef Name="DateTime" />
+            <PropertyRef Name="UserTypeID" />
+          </Key>
+          <Property Name="AvailabilityID" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="InstructorUserID" Type="int" Nullable="false" />
+          <Property Name="DateTime" Type="datetime" Nullable="false" />
+          <Property Name="UserTypeID" Type="int" Nullable="false" />
+        </EntityType>
+        <!--Errors Found During Generation:
+warning 6002: The table/view 'TestDatabase.dbo.Resumes' does not have a primary key defined. The key has been inferred and the definition was created as a read-only table/view.-->
+        <EntityType Name="Resumes">
+          <Key>
+            <PropertyRef Name="FileID" />
+            <PropertyRef Name="UserID" />
+            <PropertyRef Name="FileContent" />
+            <PropertyRef Name="UploadDate" />
+            <PropertyRef Name="FileSize" />
+          </Key>
+          <Property Name="FileID" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="UserID" Type="int" Nullable="false" />
+          <Property Name="FileContent" Type="varbinary(max)" Nullable="false" />
+          <Property Name="UploadDate" Type="datetime" Nullable="false" />
+          <Property Name="FileSize" Type="int" Nullable="false" />
+        </EntityType>
+        <!--Errors Found During Generation:
+warning 6002: The table/view 'TestDatabase.dbo.User' does not have a primary key defined. The key has been inferred and the definition was created as a read-only table/view.-->
         <EntityType Name="User">
           <Key>
             <PropertyRef Name="UserID" />
+            <PropertyRef Name="FirstName" />
+            <PropertyRef Name="LastName" />
+            <PropertyRef Name="Email" />
           </Key>
           <Property Name="UserID" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
           <Property Name="FirstName" Type="varchar" MaxLength="50" Nullable="false" />
           <Property Name="LastName" Type="varchar" MaxLength="50" Nullable="false" />
           <Property Name="Email" Type="varchar" MaxLength="50" Nullable="false" />
         </EntityType>
-        <!--Errors Found During Generation:
-warning 6002: The table/view 'TestDatabase.dbo.UserLogin' does not have a primary key defined. The key has been inferred and the definition was created as a read-only table/view.-->
+        <EntityType Name="UserGroup">
+          <Key>
+            <PropertyRef Name="UserGroupID" />
+          </Key>
+          <Property Name="UserGroupID" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="Description" Type="varchar" MaxLength="50" Nullable="false" />
+        </EntityType>
         <EntityType Name="UserLogin">
           <Key>
             <PropertyRef Name="UserID" />
-            <PropertyRef Name="Username" />
-            <PropertyRef Name="Password" />
-            <PropertyRef Name="Email" />
-            <PropertyRef Name="CreateDate" />
           </Key>
           <Property Name="UserID" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
-          <Property Name="Username" Type="nvarchar" MaxLength="30" Nullable="false" />
-          <Property Name="Password" Type="nvarchar" MaxLength="30" Nullable="false" />
-          <Property Name="Email" Type="nvarchar" MaxLength="30" Nullable="false" />
+          <Property Name="Username" Type="nvarchar" MaxLength="200" Nullable="false" />
+          <Property Name="Password" Type="nvarchar(max)" Nullable="false" />
+          <Property Name="Email" Type="nvarchar" MaxLength="200" Nullable="false" />
           <Property Name="CreateDate" Type="datetime" Nullable="false" />
           <Property Name="LoginDate" Type="datetime" />
+          <Property Name="IsEmailConfirmed" Type="bit" Nullable="false" />
+          <Property Name="ResetPasswordCode" Type="nchar" MaxLength="100" />
+          <Property Name="ActivationCode" Type="uniqueidentifier" />
+          <Property Name="UserGroupID" Type="int" Nullable="false" />
+          <Property Name="UserTypeID" Type="int" Nullable="false" />
+        </EntityType>
+        <!--Errors Found During Generation:
+warning 6002: The table/view 'TestDatabase.dbo.UserType' does not have a primary key defined. The key has been inferred and the definition was created as a read-only table/view.-->
+        <EntityType Name="UserType">
+          <Key>
+            <PropertyRef Name="UserTypeID" />
+            <PropertyRef Name="UserTypeDescription" />
+          </Key>
+          <Property Name="UserTypeID" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="UserTypeDescription" Type="nvarchar" MaxLength="50" Nullable="false" />
         </EntityType>
         <!--Errors Found During Generation:
 warning 6002: The table/view 'TestDatabase.sys.database_firewall_rules' does not have a primary key defined. The key has been inferred and the definition was created as a read-only table/view.-->
@@ -49,29 +116,91 @@ warning 6002: The table/view 'TestDatabase.sys.database_firewall_rules' does not
           <Property Name="create_date" Type="datetime" Nullable="false" />
           <Property Name="modify_date" Type="datetime" Nullable="false" />
         </EntityType>
-        <Function Name="GetUser" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
+        <Function Name="AddPasswordResetCode" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
+          <Parameter Name="Email" Type="nvarchar" Mode="In" />
+          <Parameter Name="ResetCode" Type="nvarchar" Mode="In" />
+        </Function>
+        <Function Name="ChangePassword" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
+          <Parameter Name="Password" Type="nvarchar" Mode="In" />
+          <Parameter Name="ResetCode" Type="nvarchar" Mode="In" />
+        </Function>
+        <Function Name="ConfirmEmail" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
           <Parameter Name="UserID" Type="int" Mode="In" />
+        </Function>
+        <Function Name="DeleteAvail" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
+          <Parameter Name="ID" Type="int" Mode="In" />
+        </Function>
+        <Function Name="GetEmailFromUserID" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
+          <Parameter Name="UserID" Type="int" Mode="In" />
+        </Function>
+        <Function Name="GetHighestUserID" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo" />
+        <Function Name="GetUser" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
+          <Parameter Name="Username" Type="nvarchar" Mode="In" />
         </Function>
         <Function Name="Insert_User" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
           <Parameter Name="Username" Type="nvarchar" Mode="In" />
-          <Parameter Name="Password" Type="nvarchar" Mode="In" />
+          <Parameter Name="Password" Type="nvarchar(max)" Mode="In" />
           <Parameter Name="Email" Type="nvarchar" Mode="In" />
+          <Parameter Name="ActivationCode" Type="uniqueidentifier" Mode="In" />
+          <Parameter Name="UserGroupID" Type="int" Mode="In" />
+          <Parameter Name="UserTypeID" Type="int" Mode="In" />
+        </Function>
+        <Function Name="InsertAvailablity" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
+          <Parameter Name="UserID" Type="int" Mode="In" />
+          <Parameter Name="UserTypeID" Type="int" Mode="In" />
+          <Parameter Name="DateTime" Type="datetime" Mode="In" />
+        </Function>
+        <Function Name="Upload_Resume" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
+          <Parameter Name="UserID" Type="int" Mode="In" />
+          <Parameter Name="File" Type="varbinary(max)" Mode="In" />
+          <Parameter Name="FileSize" Type="int" Mode="In" />
         </Function>
         <Function Name="Validate_User" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
           <Parameter Name="Username" Type="nvarchar" Mode="In" />
           <Parameter Name="Password" Type="nvarchar" Mode="In" />
         </Function>
         <EntityContainer Name="TestDatabaseModelStoreContainer">
-          <EntitySet Name="User" EntityType="Self.User" Schema="dbo" store:Type="Tables" />
-          <EntitySet Name="UserLogin" EntityType="Self.UserLogin" store:Type="Tables" store:Schema="dbo">
+          <EntitySet Name="UserGroup" EntityType="Self.UserGroup" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="UserLogin" EntityType="Self.UserLogin" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="Appointments" EntityType="Self.Appointments" store:Type="Tables" store:Schema="dbo">
             <DefiningQuery>SELECT 
-    [UserLogin].[UserID] AS [UserID], 
-    [UserLogin].[Username] AS [Username], 
-    [UserLogin].[Password] AS [Password], 
-    [UserLogin].[Email] AS [Email], 
-    [UserLogin].[CreateDate] AS [CreateDate], 
-    [UserLogin].[LoginDate] AS [LoginDate]
-    FROM [dbo].[UserLogin] AS [UserLogin]</DefiningQuery>
+    [Appointments].[AppointmentID] AS [AppointmentID], 
+    [Appointments].[StudentUserID] AS [StudentUserID], 
+    [Appointments].[InstructorUserID] AS [InstructorUserID], 
+    [Appointments].[Time] AS [Time], 
+    [Appointments].[IsConfirmed] AS [IsConfirmed]
+    FROM [dbo].[Appointments] AS [Appointments]</DefiningQuery>
+          </EntitySet>
+          <EntitySet Name="Availability" EntityType="Self.Availability" store:Type="Tables" store:Schema="dbo">
+            <DefiningQuery>SELECT 
+    [Availability].[AvailabilityID] AS [AvailabilityID], 
+    [Availability].[InstructorUserID] AS [InstructorUserID], 
+    [Availability].[DateTime] AS [DateTime], 
+    [Availability].[UserTypeID] AS [UserTypeID]
+    FROM [dbo].[Availability] AS [Availability]</DefiningQuery>
+          </EntitySet>
+          <EntitySet Name="Resumes" EntityType="Self.Resumes" store:Type="Tables" store:Schema="dbo">
+            <DefiningQuery>SELECT 
+    [Resumes].[FileID] AS [FileID], 
+    [Resumes].[UserID] AS [UserID], 
+    [Resumes].[FileContent] AS [FileContent], 
+    [Resumes].[UploadDate] AS [UploadDate], 
+    [Resumes].[FileSize] AS [FileSize]
+    FROM [dbo].[Resumes] AS [Resumes]</DefiningQuery>
+          </EntitySet>
+          <EntitySet Name="User" EntityType="Self.User" store:Type="Tables" store:Schema="dbo">
+            <DefiningQuery>SELECT 
+    [User].[UserID] AS [UserID], 
+    [User].[FirstName] AS [FirstName], 
+    [User].[LastName] AS [LastName], 
+    [User].[Email] AS [Email]
+    FROM [dbo].[User] AS [User]</DefiningQuery>
+          </EntitySet>
+          <EntitySet Name="UserType" EntityType="Self.UserType" store:Type="Tables" store:Schema="dbo">
+            <DefiningQuery>SELECT 
+    [UserType].[UserTypeID] AS [UserTypeID], 
+    [UserType].[UserTypeDescription] AS [UserTypeDescription]
+    FROM [dbo].[UserType] AS [UserType]</DefiningQuery>
           </EntitySet>
           <EntitySet Name="database_firewall_rules" EntityType="Self.database_firewall_rules" store:Type="Views" store:Schema="sys">
             <DefiningQuery>SELECT 
@@ -89,45 +218,140 @@ warning 6002: The table/view 'TestDatabase.sys.database_firewall_rules' does not
     <edmx:ConceptualModels>
       <Schema Namespace="TestDatabaseModel" Alias="Self" annotation:UseStrongSpatialTypes="false" xmlns:annotation="http://schemas.microsoft.com/ado/2009/02/edm/annotation" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm">
         <EntityContainer Name="TestDatabaseEntities" annotation:LazyLoadingEnabled="true">
-          <EntitySet Name="Users" EntityType="TestDatabaseModel.User" />
+          <EntitySet Name="UserGroups" EntityType="TestDatabaseModel.UserGroup" />
           <EntitySet Name="UserLogins" EntityType="TestDatabaseModel.UserLogin" />
+          <EntitySet Name="Appointments" EntityType="TestDatabaseModel.Appointment" />
+          <EntitySet Name="Availabilities" EntityType="TestDatabaseModel.Availability" />
+          <EntitySet Name="Resumes" EntityType="TestDatabaseModel.Resume" />
+          <EntitySet Name="Users" EntityType="TestDatabaseModel.User" />
+          <EntitySet Name="UserTypes" EntityType="TestDatabaseModel.UserType" />
           <EntitySet Name="database_firewall_rules" EntityType="TestDatabaseModel.database_firewall_rules" />
+          <FunctionImport Name="AddPasswordResetCode">
+            <Parameter Name="Email" Mode="In" Type="String" />
+            <Parameter Name="ResetCode" Mode="In" Type="String" />
+          </FunctionImport>
+          <FunctionImport Name="ChangePassword">
+            <Parameter Name="Password" Mode="In" Type="String" />
+            <Parameter Name="ResetCode" Mode="In" Type="String" />
+          </FunctionImport>
+          <FunctionImport Name="ConfirmEmail">
+          <Parameter Name="UserID" Mode="In" Type="Int32" />
+          </FunctionImport>
+          <FunctionImport Name="GetEmailFromUserID" ReturnType="Collection(String)">
+          <Parameter Name="UserID" Mode="In" Type="Int32" />
+          </FunctionImport>
+          <FunctionImport Name="GetHighestUserID" ReturnType="Collection(Int32)" />
           <FunctionImport Name="GetUser" ReturnType="Collection(TestDatabaseModel.GetUser_Result)">
-            <Parameter Name="UserID" Mode="In" Type="Int32" />
+          <Parameter Name="Username" Mode="In" Type="String" />
           </FunctionImport>
           <FunctionImport Name="Insert_User" ReturnType="Collection(Int32)">
             <Parameter Name="Username" Mode="In" Type="String" />
             <Parameter Name="Password" Mode="In" Type="String" />
             <Parameter Name="Email" Mode="In" Type="String" />
+            <Parameter Name="ActivationCode" Mode="In" Type="Guid" />
+            <Parameter Name="UserGroupID" Mode="In" Type="Int32" />
+            <Parameter Name="UserTypeID" Mode="In" Type="Int32" />
+          </FunctionImport>
+          <FunctionImport Name="Upload_Resume">
+            <Parameter Name="UserID" Mode="In" Type="Int32" />
+            <Parameter Name="File" Mode="In" Type="Binary" />
+            <Parameter Name="FileSize" Mode="In" Type="Int32" />
           </FunctionImport>
           <FunctionImport Name="Validate_User" ReturnType="Collection(Int32)">
             <Parameter Name="Username" Mode="In" Type="String" />
             <Parameter Name="Password" Mode="In" Type="String" />
           </FunctionImport>
+          <FunctionImport Name="InsertAvailablity" ReturnType="Collection(Decimal)">
+            <Parameter Name="UserID" Mode="In" Type="Int32" />
+            <Parameter Name="UserTypeID" Mode="In" Type="Int32" />
+            <Parameter Name="DateTime" Mode="In" Type="DateTime" />
+          </FunctionImport>
+          <FunctionImport Name="DeleteAvail">
+            <Parameter Name="ID" Mode="In" Type="Int32" />
+          </FunctionImport>
         </EntityContainer>
+        <EntityType Name="UserGroup">
+          <Key>
+            <PropertyRef Name="UserGroupID" />
+          </Key>
+          <Property Name="UserGroupID" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="Description" Type="String" Nullable="false" MaxLength="50" FixedLength="false" Unicode="false" />
+        </EntityType>
+        <EntityType Name="UserLogin">
+          <Key>
+            <PropertyRef Name="UserID" />
+          </Key>
+          <Property Name="UserID" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="Username" Type="String" Nullable="false" MaxLength="200" FixedLength="false" Unicode="true" />
+          <Property Name="Password" Type="String" Nullable="false" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="Email" Type="String" Nullable="false" MaxLength="200" FixedLength="false" Unicode="true" />
+          <Property Name="CreateDate" Type="DateTime" Nullable="false" Precision="3" />
+          <Property Name="LoginDate" Type="DateTime" Precision="3" />
+          <Property Name="IsEmailConfirmed" Type="Boolean" Nullable="false" />
+          <Property Name="ResetPasswordCode" Type="String" MaxLength="100" FixedLength="true" Unicode="true" />
+          <Property Name="ActivationCode" Type="Guid" />
+          <Property Name="UserGroupID" Type="Int32" Nullable="false" />
+          <Property Name="UserTypeID" Type="Int32" Nullable="false" />
+        </EntityType>
+        <EntityType Name="Appointment">
+          <Key>
+            <PropertyRef Name="AppointmentID" />
+            <PropertyRef Name="StudentUserID" />
+            <PropertyRef Name="InstructorUserID" />
+            <PropertyRef Name="Time" />
+            <PropertyRef Name="IsConfirmed" />
+          </Key>
+          <Property Name="AppointmentID" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="StudentUserID" Type="Int32" Nullable="false" />
+          <Property Name="InstructorUserID" Type="Int32" Nullable="false" />
+          <Property Name="Time" Type="DateTime" Nullable="false" Precision="7" />
+          <Property Name="IsConfirmed" Type="Boolean" Nullable="false" />
+        </EntityType>
+        <EntityType Name="Availability">
+          <Key>
+            <PropertyRef Name="AvailabilityID" />
+            <PropertyRef Name="InstructorUserID" />
+            <PropertyRef Name="DateTime" />
+            <PropertyRef Name="UserTypeID" />
+          </Key>
+          <Property Name="AvailabilityID" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="InstructorUserID" Type="Int32" Nullable="false" />
+          <Property Name="DateTime" Type="DateTime" Nullable="false" Precision="3" />
+          <Property Name="UserTypeID" Type="Int32" Nullable="false" />
+        </EntityType>
+        <EntityType Name="Resume">
+          <Key>
+            <PropertyRef Name="FileID" />
+            <PropertyRef Name="UserID" />
+            <PropertyRef Name="FileContent" />
+            <PropertyRef Name="UploadDate" />
+            <PropertyRef Name="FileSize" />
+          </Key>
+          <Property Name="FileID" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="UserID" Type="Int32" Nullable="false" />
+          <Property Name="FileContent" Type="Binary" Nullable="false" MaxLength="Max" FixedLength="false" />
+          <Property Name="UploadDate" Type="DateTime" Nullable="false" Precision="3" />
+          <Property Name="FileSize" Type="Int32" Nullable="false" />
+        </EntityType>
         <EntityType Name="User">
           <Key>
             <PropertyRef Name="UserID" />
+            <PropertyRef Name="FirstName" />
+            <PropertyRef Name="LastName" />
+            <PropertyRef Name="Email" />
           </Key>
           <Property Name="UserID" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
           <Property Name="FirstName" Type="String" Nullable="false" MaxLength="50" FixedLength="false" Unicode="false" />
           <Property Name="LastName" Type="String" Nullable="false" MaxLength="50" FixedLength="false" Unicode="false" />
           <Property Name="Email" Type="String" Nullable="false" MaxLength="50" FixedLength="false" Unicode="false" />
         </EntityType>
-        <EntityType Name="UserLogin">
+        <EntityType Name="UserType">
           <Key>
-            <PropertyRef Name="UserID" />
-            <PropertyRef Name="Username" />
-            <PropertyRef Name="Password" />
-            <PropertyRef Name="Email" />
-            <PropertyRef Name="CreateDate" />
+            <PropertyRef Name="UserTypeID" />
+            <PropertyRef Name="UserTypeDescription" />
           </Key>
-          <Property Name="UserID" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
-          <Property Name="Username" Type="String" Nullable="false" MaxLength="30" FixedLength="false" Unicode="true" />
-          <Property Name="Password" Type="String" Nullable="false" MaxLength="30" FixedLength="false" Unicode="true" />
-          <Property Name="Email" Type="String" Nullable="false" MaxLength="30" FixedLength="false" Unicode="true" />
-          <Property Name="CreateDate" Type="DateTime" Nullable="false" Precision="3" />
-          <Property Name="LoginDate" Type="DateTime" Precision="3" />
+          <Property Name="UserTypeID" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="UserTypeDescription" Type="String" Nullable="false" MaxLength="50" FixedLength="false" Unicode="true" />
         </EntityType>
         <EntityType Name="database_firewall_rules">
           <Key>
@@ -156,6 +380,63 @@ warning 6002: The table/view 'TestDatabase.sys.database_firewall_rules' does not
     <edmx:Mappings>
       <Mapping Space="C-S" xmlns="http://schemas.microsoft.com/ado/2009/11/mapping/cs">
         <EntityContainerMapping StorageEntityContainer="TestDatabaseModelStoreContainer" CdmEntityContainer="TestDatabaseEntities">
+          <EntitySetMapping Name="UserGroups">
+            <EntityTypeMapping TypeName="TestDatabaseModel.UserGroup">
+              <MappingFragment StoreEntitySet="UserGroup">
+                <ScalarProperty Name="Description" ColumnName="Description" />
+                <ScalarProperty Name="UserGroupID" ColumnName="UserGroupID" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="UserLogins">
+            <EntityTypeMapping TypeName="TestDatabaseModel.UserLogin">
+              <MappingFragment StoreEntitySet="UserLogin">
+                <ScalarProperty Name="UserTypeID" ColumnName="UserTypeID" />
+                <ScalarProperty Name="UserGroupID" ColumnName="UserGroupID" />
+                <ScalarProperty Name="ActivationCode" ColumnName="ActivationCode" />
+                <ScalarProperty Name="ResetPasswordCode" ColumnName="ResetPasswordCode" />
+                <ScalarProperty Name="IsEmailConfirmed" ColumnName="IsEmailConfirmed" />
+                <ScalarProperty Name="LoginDate" ColumnName="LoginDate" />
+                <ScalarProperty Name="CreateDate" ColumnName="CreateDate" />
+                <ScalarProperty Name="Email" ColumnName="Email" />
+                <ScalarProperty Name="Password" ColumnName="Password" />
+                <ScalarProperty Name="Username" ColumnName="Username" />
+                <ScalarProperty Name="UserID" ColumnName="UserID" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="Appointments">
+            <EntityTypeMapping TypeName="TestDatabaseModel.Appointment">
+              <MappingFragment StoreEntitySet="Appointments">
+                <ScalarProperty Name="IsConfirmed" ColumnName="IsConfirmed" />
+                <ScalarProperty Name="Time" ColumnName="Time" />
+                <ScalarProperty Name="InstructorUserID" ColumnName="InstructorUserID" />
+                <ScalarProperty Name="StudentUserID" ColumnName="StudentUserID" />
+                <ScalarProperty Name="AppointmentID" ColumnName="AppointmentID" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="Availabilities">
+            <EntityTypeMapping TypeName="TestDatabaseModel.Availability">
+              <MappingFragment StoreEntitySet="Availability">
+                <ScalarProperty Name="UserTypeID" ColumnName="UserTypeID" />
+                <ScalarProperty Name="DateTime" ColumnName="DateTime" />
+                <ScalarProperty Name="InstructorUserID" ColumnName="InstructorUserID" />
+                <ScalarProperty Name="AvailabilityID" ColumnName="AvailabilityID" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="Resumes">
+            <EntityTypeMapping TypeName="TestDatabaseModel.Resume">
+              <MappingFragment StoreEntitySet="Resumes">
+                <ScalarProperty Name="FileSize" ColumnName="FileSize" />
+                <ScalarProperty Name="UploadDate" ColumnName="UploadDate" />
+                <ScalarProperty Name="FileContent" ColumnName="FileContent" />
+                <ScalarProperty Name="UserID" ColumnName="UserID" />
+                <ScalarProperty Name="FileID" ColumnName="FileID" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
           <EntitySetMapping Name="Users">
             <EntityTypeMapping TypeName="TestDatabaseModel.User">
               <MappingFragment StoreEntitySet="User">
@@ -166,15 +447,11 @@ warning 6002: The table/view 'TestDatabase.sys.database_firewall_rules' does not
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>
-          <EntitySetMapping Name="UserLogins">
-            <EntityTypeMapping TypeName="TestDatabaseModel.UserLogin">
-              <MappingFragment StoreEntitySet="UserLogin">
-                <ScalarProperty Name="LoginDate" ColumnName="LoginDate" />
-                <ScalarProperty Name="CreateDate" ColumnName="CreateDate" />
-                <ScalarProperty Name="Email" ColumnName="Email" />
-                <ScalarProperty Name="Password" ColumnName="Password" />
-                <ScalarProperty Name="Username" ColumnName="Username" />
-                <ScalarProperty Name="UserID" ColumnName="UserID" />
+          <EntitySetMapping Name="UserTypes">
+            <EntityTypeMapping TypeName="TestDatabaseModel.UserType">
+              <MappingFragment StoreEntitySet="UserType">
+                <ScalarProperty Name="UserTypeDescription" ColumnName="UserTypeDescription" />
+                <ScalarProperty Name="UserTypeID" ColumnName="UserTypeID" />
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>
@@ -190,6 +467,11 @@ warning 6002: The table/view 'TestDatabase.sys.database_firewall_rules' does not
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>
+          <FunctionImportMapping FunctionImportName="AddPasswordResetCode" FunctionName="TestDatabaseModel.Store.AddPasswordResetCode" />
+          <FunctionImportMapping FunctionImportName="ChangePassword" FunctionName="TestDatabaseModel.Store.ChangePassword" />
+          <FunctionImportMapping FunctionImportName="ConfirmEmail" FunctionName="TestDatabaseModel.Store.ConfirmEmail" />
+          <FunctionImportMapping FunctionImportName="GetEmailFromUserID" FunctionName="TestDatabaseModel.Store.GetEmailFromUserID" />
+          <FunctionImportMapping FunctionImportName="GetHighestUserID" FunctionName="TestDatabaseModel.Store.GetHighestUserID" />
           <FunctionImportMapping FunctionImportName="GetUser" FunctionName="TestDatabaseModel.Store.GetUser">
             <ResultMapping>
               <ComplexTypeMapping TypeName="TestDatabaseModel.GetUser_Result">
@@ -200,7 +482,10 @@ warning 6002: The table/view 'TestDatabase.sys.database_firewall_rules' does not
             </ResultMapping>
           </FunctionImportMapping>
           <FunctionImportMapping FunctionImportName="Insert_User" FunctionName="TestDatabaseModel.Store.Insert_User" />
+          <FunctionImportMapping FunctionImportName="Upload_Resume" FunctionName="TestDatabaseModel.Store.Upload_Resume" />
           <FunctionImportMapping FunctionImportName="Validate_User" FunctionName="TestDatabaseModel.Store.Validate_User" />
+          <FunctionImportMapping FunctionImportName="InsertAvailablity" FunctionName="TestDatabaseModel.Store.InsertAvailablity" />
+          <FunctionImportMapping FunctionImportName="DeleteAvail" FunctionName="TestDatabaseModel.Store.DeleteAvail" />
         </EntityContainerMapping>
       </Mapping>
     </edmx:Mappings>

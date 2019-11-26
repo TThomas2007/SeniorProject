@@ -20,5 +20,10 @@ namespace TestWebApplication
         public string Email { get; set; }
         public System.DateTime CreateDate { get; set; }
         public Nullable<System.DateTime> LoginDate { get; set; }
+        public bool IsEmailConfirmed { get; set; }
+        public string ResetPasswordCode { get; set; }
+        public Nullable<System.Guid> ActivationCode { get; set; }
+        public int UserGroupID { get; set; }
+        public int UserTypeID { get; set; }
     }
 }

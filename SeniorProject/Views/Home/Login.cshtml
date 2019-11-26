@@ -8,7 +8,7 @@
 <html>
 <head>
     <meta name="viewport" content="width=device-width" />
-    <title>Index</title>
+    <title>Login</title>
     <style type="text/css">
         body {
             font-family: Arial;
@@ -41,7 +41,7 @@
     {
         @Html.AntiForgeryToken()
         @Html.ValidationSummary(true)
-        if (@ViewBag.Message != null)
+        if (ViewBag.Message != null)
         {
             <div style="border: 1px solid red">
                 @ViewBag.Message
@@ -58,7 +58,7 @@
                     Username
                 </td>
                 <td>
-                    @Html.TextBoxFor(m => m.UserLogin.Username)
+                    @Html.TextBoxFor(m => m.Username)
                 </td>
 
             </tr>
@@ -67,7 +67,7 @@
                     Password
                 </td>
                 <td>
-                    @Html.PasswordFor(m => m.UserLogin.Password)
+                    @Html.PasswordFor(m => m.Password)
                 </td>
 
             </tr>
@@ -80,11 +80,13 @@
                 </td>
 
             </tr>
-            
+
         </table>
         <input type="submit" value="Submit" />
     }
-    <br/>
+    <br />
+    <p>Forgot your password? Click @Html.ActionLink("HERE", "ResetPassword", "Home")</p>
+    <br />
     <p>Need an account? Click @Html.ActionLink("HERE", "CreateUser", "Home") to create one!</p>
 
     @Scripts.Render("~/bundles/jquery")

@@ -32,17 +32,18 @@
             @Html.ActionLink("PrepIN", "Index", "Home", new { area = "" }, new { @class = "navbar-brand" })
             <div class="float-right">
                 <div class="container-fluid">
-                    @if (Session["UserID"] == null)
+
+                    @if (User.Identity.IsAuthenticated)
+                    {
+                        @Html.ActionLink(User.Identity.Name, "ProfilePage", "Home")
+                        @:&nbsp;
+                        @Html.ActionLink("Logout", "Logout", "Home")
+                    }
+                    else
                     {
                         @Html.ActionLink("Login", "Login", "Home")
                     }
 
-                    @if (Session["UserID"] != null)
-                    {
-                        @Html.ActionLink(Session["UserName"].ToString(), "ProfilePage", "Home")
-                        @:&nbsp;
-                        @Html.ActionLink("Logout", "Logout", "Home")
-                    }
                 </div>
             </div>
         </div>
