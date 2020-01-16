@@ -265,7 +265,7 @@ namespace TestWebApplication.Controllers
 
                     model.AvailList = context.Availabilities.Where(x => x.InstructorUserID == model.UserID).ToList();
                 }
-                if (user.HasAppointment == true && user.UserGroupID == 1)
+                if (user.HasAppointment == true)
                 {
 
                     model.Appointments = context.Appointments.Where(x => x.StudentUserID == model.UserID).ToList();
