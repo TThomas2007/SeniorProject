@@ -22,5 +22,10 @@ namespace TestWebApplication.Models
         public string confirmPassword { get; set; }
         public bool RememberMe { get; set; }
         public List<Availability> AvailList { get; set; }
+        public bool HasAppointment { get; set; }
+        public int SelectedAvailId { get; set; }
+        public List<Availability> MatchedAvails { get; set; }
+        public List<Appointment> Appointments { get; set; }
+        
     }
 }

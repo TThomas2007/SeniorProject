@@ -25,5 +25,6 @@ namespace TestWebApplication
         public Nullable<System.Guid> ActivationCode { get; set; }
         public int UserGroupID { get; set; }
         public int UserTypeID { get; set; }
+        public bool HasAppointment { get; set; }
     }
 }

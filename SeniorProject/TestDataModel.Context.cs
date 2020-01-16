@@ -71,6 +71,15 @@ namespace TestWebApplication
             return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction("ConfirmEmail", userIDParameter);
         }
     
+        public virtual int DeleteAvail(Nullable<int> iD)
+        {
+            var iDParameter = iD.HasValue ?
+                new ObjectParameter("ID", iD) :
+                new ObjectParameter("ID", typeof(int));
+    
+            return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction("DeleteAvail", iDParameter);
+        }
+    
         public virtual ObjectResult<string> GetEmailFromUserID(Nullable<int> userID)
         {
             var userIDParameter = userID.HasValue ?
@@ -123,6 +132,44 @@ namespace TestWebApplication
             return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction<Nullable<int>>("Insert_User", usernameParameter, passwordParameter, emailParameter, activationCodeParameter, userGroupIDParameter, userTypeIDParameter);
         }
     
+        public virtual ObjectResult<Nullable<decimal>> InsertAppointment(Nullable<int> userID, Nullable<int> instructorID, Nullable<System.DateTime> dateTime, Nullable<System.Guid> confirmCode)
+        {
+            var userIDParameter = userID.HasValue ?
+                new ObjectParameter("UserID", userID) :
+                new ObjectParameter("UserID", typeof(int));
+    
+            var instructorIDParameter = instructorID.HasValue ?
+                new ObjectParameter("InstructorID", instructorID) :
+                new ObjectParameter("InstructorID", typeof(int));
+    
+            var dateTimeParameter = dateTime.HasValue ?
+                new ObjectParameter("DateTime", dateTime) :
+                new ObjectParameter("DateTime", typeof(System.DateTime));
+    
+            var confirmCodeParameter = confirmCode.HasValue ?
+                new ObjectParameter("ConfirmCode", confirmCode) :
+                new ObjectParameter("ConfirmCode", typeof(System.Guid));
+    
+            return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction<Nullable<decimal>>("InsertAppointment", userIDParameter, instructorIDParameter, dateTimeParameter, confirmCodeParameter);
+        }
+    
+        public virtual ObjectResult<Nullable<decimal>> InsertAvailablity(Nullable<int> userID, Nullable<int> userTypeID, Nullable<System.DateTime> dateTime)
+        {
+            var userIDParameter = userID.HasValue ?
+                new ObjectParameter("UserID", userID) :
+                new ObjectParameter("UserID", typeof(int));
+    
+            var userTypeIDParameter = userTypeID.HasValue ?
+                new ObjectParameter("UserTypeID", userTypeID) :
+                new ObjectParameter("UserTypeID", typeof(int));
+    
+            var dateTimeParameter = dateTime.HasValue ?
+                new ObjectParameter("DateTime", dateTime) :
+                new ObjectParameter("DateTime", typeof(System.DateTime));
+    
+            return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction<Nullable<decimal>>("InsertAvailablity", userIDParameter, userTypeIDParameter, dateTimeParameter);
+        }
+    
         public virtual int Upload_Resume(Nullable<int> userID, byte[] file, Nullable<int> fileSize)
         {
             var userIDParameter = userID.HasValue ?
@@ -153,30 +200,26 @@ namespace TestWebApplication
             return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction<Nullable<int>>("Validate_User", usernameParameter, passwordParameter);
         }
     
-        public virtual ObjectResult<Nullable<decimal>> InsertAvailablity(Nullable<int> userID, Nullable<int> userTypeID, Nullable<System.DateTime> dateTime)
+        public virtual int ConfirmApt(Nullable<int> aptID, Nullable<int> userID)
         {
+            var aptIDParameter = aptID.HasValue ?
+                new ObjectParameter("AptID", aptID) :
+                new ObjectParameter("AptID", typeof(int));
+    
             var userIDParameter = userID.HasValue ?
                 new ObjectParameter("UserID", userID) :
                 new ObjectParameter("UserID", typeof(int));
     
-            var userTypeIDParameter = userTypeID.HasValue ?
-                new ObjectParameter("UserTypeID", userTypeID) :
-                new ObjectParameter("UserTypeID", typeof(int));
-    
-            var dateTimeParameter = dateTime.HasValue ?
-                new ObjectParameter("DateTime", dateTime) :
-                new ObjectParameter("DateTime", typeof(System.DateTime));
-    
-            return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction<Nullable<decimal>>("InsertAvailablity", userIDParameter, userTypeIDParameter, dateTimeParameter);
+            return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction("ConfirmApt", aptIDParameter, userIDParameter);
         }
     
-        public virtual int DeleteAvail(Nullable<int> iD)
+        public virtual int DeleteApt(Nullable<int> iD)
         {
             var iDParameter = iD.HasValue ?
                 new ObjectParameter("ID", iD) :
                 new ObjectParameter("ID", typeof(int));
     
-            return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction("DeleteAvail", iDParameter);
+            return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction("DeleteApt", iDParameter);
         }
     }
 }

@@ -13,14 +13,9 @@
     
     <div class="navbar navbar-inverse navbar-fixed-top">
         <div class="container">
-            <div class="navbar-header">
-                <button type="button" class="navbar" data-toggle="collapse" data-target=".navbar-collapse">
-                    @*<span class="icon-bar"></span>
-                <span class="icon-bar"></span>
-                <span class="icon-bar"></span>*@
-                    Menu
-                </button>
-            </div>
+            <button type="button" class="navbar" data-toggle="collapse" data-target=".navbar-collapse">
+                Menu
+            </button>
             <div class="navbar-collapse collapse">
                 <ul class="nav navbar-nav">
                     <li>@Html.ActionLink("Home", "Home", "Home")</li>
@@ -28,7 +23,7 @@
                     <li>@Html.ActionLink("Create Account", "CreateUser", "Home")</li>
                 </ul>
             </div>
-            @Html.ActionLink("PrepIN", "Index", "Home", new { area = "" }, new { @class = "navbar-brand" })
+            <a class="navbar-header" href="#"><img src="https://i.imgur.com/PjMglHs.png"></a>
             <div class="float-right">
                 <div class="container-fluid">
 

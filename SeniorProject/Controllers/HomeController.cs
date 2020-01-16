@@ -71,7 +71,7 @@ namespace TestWebApplication.Controllers
                 context.Insert_User(user.Username, passwordHash, user.Email, activationCode, (int)user.UserGroup, (int)user.UserType);
 
 
-                SendCodeEmail(user.Email, activationCode.ToString(), "verify");
+                SendCodeEmail(user.Email, activationCode.ToString(), "verify", null);
 
                 return RedirectToAction("AccountSuccess");
             }
@@ -79,9 +79,9 @@ namespace TestWebApplication.Controllers
         }
 
         [NonAction]
-        public void SendCodeEmail(string email, string code, string action)
+        public void SendCodeEmail(string email, string code, string action, UserModel user)
         {
-
+            TestDatabaseEntities context = new TestDatabaseEntities();
 
             if (action == "verify")
             {
@@ -145,6 +145,40 @@ namespace TestWebApplication.Controllers
                 })
                     smtp.Send(message);
             }
+            else if (action == "confirmApt" && user != null)
+            {
+                var acceptUrl = "/Home/ConfirmApt?confirmCode=" + code;
+                var denyUrl = "/Home/DenyApt?denyCode=" + code;
+                var acceptLink = Request.Url.AbsoluteUri.Replace(Request.Url.PathAndQuery, acceptUrl);
+                var denyLink = Request.Url.AbsoluteUri.Replace(Request.Url.PathAndQuery, denyUrl);
+                var fromEmail = new MailAddress("prepinseniorproject@gmail.com", "PrepIN Support");
+                var toEmail = new MailAddress(email);
+                var fromEmailPassword = "seniorproject20";
+                string subject = "Confirm Appointment";
+
+                string body = "</br> </br> You have a new appointment set up with " + user.Username.ToString() + ". Click <a href='" + acceptLink + "'>here</a> to accept this appointment. Click <a href='" + denyLink + "'>here</a> to deny this appointment.";
+
+
+                var smtp = new SmtpClient
+                {
+                    Host = "smtp.gmail.com",
+                    Port = 587,
+                    EnableSsl = true,
+                    DeliveryMethod = SmtpDeliveryMethod.Network,
+                    UseDefaultCredentials = false,
+                    Credentials = new NetworkCredential(fromEmail.Address, fromEmailPassword)
+
+                };
+
+                using (var message = new MailMessage(fromEmail, toEmail)
+                {
+                    Subject = subject,
+                    Body = body,
+                    IsBodyHtml = true
+                })
+                    smtp.Send(message);
+            }
+
         }
         [HttpGet]
         public ActionResult VerifyAccount(string activationCode)
@@ -172,9 +206,11 @@ namespace TestWebApplication.Controllers
 
 
             var obj = context.UserLogins.Where(x => x.Username.Equals(user.Username)).FirstOrDefault();
+            var pass = Crypto.Hash(user.Password);
+
             if (obj != null && obj.IsEmailConfirmed == true)
             {
-                if (string.Compare(Crypto.Hash(user.Password), obj.Password) == 0) {
+                if (string.Compare(pass, obj.Password) == 0) {
                     int timeout = user.RememberMe ? 525600 : 20;
                     var ticket = new FormsAuthenticationTicket(user.Username, user.RememberMe, timeout);
                     string encrypted = FormsAuthentication.Encrypt(ticket);
@@ -192,6 +228,10 @@ namespace TestWebApplication.Controllers
                        
                         return RedirectToAction("ProfilePage");
                     }
+                }
+                else
+                {
+                    ViewBag.Message = "Username/Password combo incorrect. Please try again";
                 }
             }
             else if(obj.IsEmailConfirmed == false)
@@ -219,12 +259,17 @@ namespace TestWebApplication.Controllers
                 model.UserID = user.UserID;
                 model.UserGroupID = user.UserGroupID;
                 model.UserTypeID = user.UserTypeID;
+                model.HasAppointment = user.HasAppointment;
                 if(user.UserGroupID != 1)
                 {
 
                     model.AvailList = context.Availabilities.Where(x => x.InstructorUserID == model.UserID).ToList();
                 }
+                if (user.HasAppointment == true && user.UserGroupID == 1)
+                {
 
+                    model.Appointments = context.Appointments.Where(x => x.StudentUserID == model.UserID).ToList();
+                }
                 return View(model);
             }
             else
@@ -239,10 +284,7 @@ namespace TestWebApplication.Controllers
             FormsAuthentication.SignOut();
             return RedirectToAction("Login");
         }
-        public ActionResult ResetPassword()
-        {
-            return View();
-        }
+       
         public ActionResult Availability()
         {
             if (User.Identity.IsAuthenticated)
@@ -274,18 +316,20 @@ namespace TestWebApplication.Controllers
             return RedirectToAction("Availability");
         }
 
-        [HttpPost]
-        [ValidateAntiForgeryToken]
+        [HttpGet]
         public ActionResult RemoveAvail(int id)
         {
 
             TestDatabaseEntities context = new TestDatabaseEntities();
             context.DeleteAvail(id);
-            ViewBag.message = "You have successfully deleted availabaility time.";
+            ViewBag.Message = "You have successfully deleted availability time.";
 
             return RedirectToAction("ProfilePage");
         }
-
+        public ActionResult ResetPassword()
+        {
+            return View();
+        }
         [HttpPost]
         [ValidateAntiForgeryToken]
         public ActionResult ResetPassword(string email)
@@ -298,7 +342,7 @@ namespace TestWebApplication.Controllers
             {
                 string resetCode = Guid.NewGuid().ToString();
                 context.AddPasswordResetCode(email, resetCode);
-                SendCodeEmail(email, resetCode, "reset");
+                SendCodeEmail(email, resetCode, "reset", null);
                 ViewBag.Message = "Password reset email sent to " + email;
             }
 
@@ -344,5 +388,137 @@ namespace TestWebApplication.Controllers
             }
 
         }
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public ActionResult PickAppointment(UserModel user)
+        {
+
+            TestDatabaseEntities context = new TestDatabaseEntities();
+            if (user != null)
+            {
+                var selection = context.Availabilities.Where(x => x.AvailabilityID == user.SelectedAvailId).FirstOrDefault();
+                var instructor = context.UserLogins.Where(x => x.UserID == selection.InstructorUserID).FirstOrDefault();
+                var confirmCode = Guid.NewGuid();
+                context.InsertAppointment(user.UserID, selection.InstructorUserID, selection.DateTime, confirmCode);
+                
+                SendCodeEmail(instructor.Email, confirmCode.ToString(), "confirmApt", user);
+                ViewBag.Message = "You have successfully asked for an meeting with " + instructor.Username.ToString() + ". We will notify you when they have confirmed the appointment.";
+            }
+
+            return RedirectToAction("ProfilePage");
+        }
+        [HttpGet]
+        public ActionResult ConfirmApt(string confirmCode)
+        {
+            TestDatabaseEntities context = new TestDatabaseEntities();
+            var v = context.Appointments.Where(x => x.confirmCode == new Guid(confirmCode)).FirstOrDefault();
+            var aptUser = context.UserLogins.Where(x => x.UserID == v.StudentUserID).FirstOrDefault();
+            var instructor = context.UserLogins.Where(x => x.UserID == v.InstructorUserID).FirstOrDefault();
+            if (v != null)
+            {
+                context.ConfirmApt(v.AppointmentID, aptUser.UserID);
+
+                
+                var fromEmail = new MailAddress("prepinseniorproject@gmail.com", "PrepIN Support");
+                var toEmail = new MailAddress(aptUser.Email);
+                var fromEmailPassword = "seniorproject20";
+                string subject = "Confirmation of Appointment";
+
+                string body = "</br> </br> Your appointment with " + instructor.Username.ToString() + " for " + v.Time.ToLongDateString() + " at " +v.Time.ToShortTimeString() + " has been confirmed!";
+
+
+                var smtp = new SmtpClient
+                {
+                    Host = "smtp.gmail.com",
+                    Port = 587,
+                    EnableSsl = true,
+                    DeliveryMethod = SmtpDeliveryMethod.Network,
+                    UseDefaultCredentials = false,
+                    Credentials = new NetworkCredential(fromEmail.Address, fromEmailPassword)
+
+                };
+
+                using (var message = new MailMessage(fromEmail, toEmail)
+                {
+                    Subject = subject,
+                    Body = body,
+                    IsBodyHtml = true
+                })
+                    smtp.Send(message);
+            
+
+
+            ViewBag.Message = "You have successfully confirmed your appointment with " + aptUser.Username + ".";
+                return RedirectToAction("ProfilePage");
+            }
+            else
+            {
+                ViewBag.Message = "An error has occured. Redirecting you to profile page or login page.";
+                return RedirectToAction("ProfilePage");
+            }
+            
+        }
+        [HttpGet]
+        public ActionResult DenyApt(string denyCode)
+        {
+            TestDatabaseEntities context = new TestDatabaseEntities();
+            var v = context.Appointments.Where(x => x.confirmCode == new Guid(denyCode)).FirstOrDefault();
+            var aptUser = context.UserLogins.Where(x => x.UserID == v.StudentUserID).FirstOrDefault();
+            var instructor = context.UserLogins.Where(x => x.UserID == v.InstructorUserID).FirstOrDefault();
+            if (v != null)
+            {
+                context.DeleteApt(v.AppointmentID);
+
+
+                var fromEmail = new MailAddress("prepinseniorproject@gmail.com", "PrepIN Support");
+                var toEmail = new MailAddress(aptUser.Email);
+                var fromEmailPassword = "seniorproject20";
+                string subject = "Denial of Appointment";
+
+                string body = "</br> </br> Your appointment with " + instructor.Username.ToString() + " for " + v.Time.ToLongDateString() + " at " + v.Time.ToShortTimeString() + " was denyed. Please choose another time.";
+
+
+                var smtp = new SmtpClient
+                {
+                    Host = "smtp.gmail.com",
+                    Port = 587,
+                    EnableSsl = true,
+                    DeliveryMethod = SmtpDeliveryMethod.Network,
+                    UseDefaultCredentials = false,
+                    Credentials = new NetworkCredential(fromEmail.Address, fromEmailPassword)
+
+                };
+
+                using (var message = new MailMessage(fromEmail, toEmail)
+                {
+                    Subject = subject,
+                    Body = body,
+                    IsBodyHtml = true
+                })
+                    smtp.Send(message);
+
+
+
+                ViewBag.Message = "You have successfully denied the appointment with " + aptUser.Username + ".";
+                return RedirectToAction("ProfilePage");
+            }
+            else
+            {
+                ViewBag.Message = "An error has occured. Redirecting you to profile page or login page.";
+                return RedirectToAction("ProfilePage");
+            }
+
+        }
+        [HttpGet]
+        public ActionResult CancelApt(int id)
+        {
+
+            TestDatabaseEntities context = new TestDatabaseEntities();
+            context.DeleteApt(id);
+            ViewBag.Message = "You have successfully canceled your appointment.";
+
+            return RedirectToAction("ProfilePage");
+        }
+
     }
 }

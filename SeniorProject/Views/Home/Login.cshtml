@@ -41,12 +41,11 @@
     {
         @Html.AntiForgeryToken()
         @Html.ValidationSummary(true)
-        if (ViewBag.Message != null)
-        {
-            <div style="border: 1px solid red">
-                @ViewBag.Message
-            </div>
-        }
+    <div class="form-group">
+        <div class="alert-danger">
+            @ViewBag.Message
+        </div>
+    </div>
         <table border="0" cellpadding="0" cellspacing="0">
             <tr>
                 <th colspan="3">

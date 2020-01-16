@@ -19,5 +19,6 @@ namespace TestWebApplication
         public int InstructorUserID { get; set; }
         public System.DateTime Time { get; set; }
         public bool IsConfirmed { get; set; }
+        public System.Guid confirmCode { get; set; }
     }
 }

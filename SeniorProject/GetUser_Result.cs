@@ -13,8 +13,9 @@ namespace TestWebApplication
     
     public partial class GetUser_Result
     {
-        public string FirstName { get; set; }
-        public string LastName { get; set; }
+        public int UserID { get; set; }
+        public int UserGroupID { get; set; }
+        public int UserTypeID { get; set; }
         public string Email { get; set; }
     }
 }

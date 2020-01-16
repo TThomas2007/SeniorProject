@@ -197,6 +197,7 @@
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
+    <Compile Include="Models\AppointmentModel.cs" />
     <Compile Include="Models\AvailabilityModel.cs" />
     <Compile Include="Models\Enum.cs" />
     <Compile Include="Models\File.cs" />
@@ -431,6 +432,7 @@
     <Content Include="Views\Home\AccountSuccess.cshtml" />
     <Content Include="Views\Home\ResetPasswordCodeValidation.cshtml" />
     <Content Include="Views\Home\Availability.cshtml" />
+    <Content Include="Views\Home\WebChat.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

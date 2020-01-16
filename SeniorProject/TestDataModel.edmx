@@ -14,12 +14,14 @@ warning 6002: The table/view 'TestDatabase.dbo.Appointments' does not have a pri
             <PropertyRef Name="InstructorUserID" />
             <PropertyRef Name="Time" />
             <PropertyRef Name="IsConfirmed" />
+            <PropertyRef Name="confirmCode" />
           </Key>
           <Property Name="AppointmentID" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
           <Property Name="StudentUserID" Type="int" Nullable="false" />
           <Property Name="InstructorUserID" Type="int" Nullable="false" />
           <Property Name="Time" Type="datetime2" Precision="7" Nullable="false" />
           <Property Name="IsConfirmed" Type="bit" Nullable="false" />
+          <Property Name="confirmCode" Type="uniqueidentifier" Nullable="false" />
         </EntityType>
         <!--Errors Found During Generation:
 warning 6002: The table/view 'TestDatabase.dbo.Availability' does not have a primary key defined. The key has been inferred and the definition was created as a read-only table/view.-->
@@ -87,6 +89,7 @@ warning 6002: The table/view 'TestDatabase.dbo.User' does not have a primary key
           <Property Name="ActivationCode" Type="uniqueidentifier" />
           <Property Name="UserGroupID" Type="int" Nullable="false" />
           <Property Name="UserTypeID" Type="int" Nullable="false" />
+          <Property Name="HasAppointment" Type="bit" Nullable="false" />
         </EntityType>
         <!--Errors Found During Generation:
 warning 6002: The table/view 'TestDatabase.dbo.UserType' does not have a primary key defined. The key has been inferred and the definition was created as a read-only table/view.-->
@@ -124,8 +127,15 @@ warning 6002: The table/view 'TestDatabase.sys.database_firewall_rules' does not
           <Parameter Name="Password" Type="nvarchar" Mode="In" />
           <Parameter Name="ResetCode" Type="nvarchar" Mode="In" />
         </Function>
+        <Function Name="ConfirmApt" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
+          <Parameter Name="AptID" Type="int" Mode="In" />
+          <Parameter Name="UserID" Type="int" Mode="In" />
+        </Function>
         <Function Name="ConfirmEmail" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
           <Parameter Name="UserID" Type="int" Mode="In" />
+        </Function>
+        <Function Name="DeleteApt" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
+          <Parameter Name="ID" Type="int" Mode="In" />
         </Function>
         <Function Name="DeleteAvail" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
           <Parameter Name="ID" Type="int" Mode="In" />
@@ -144,6 +154,12 @@ warning 6002: The table/view 'TestDatabase.sys.database_firewall_rules' does not
           <Parameter Name="ActivationCode" Type="uniqueidentifier" Mode="In" />
           <Parameter Name="UserGroupID" Type="int" Mode="In" />
           <Parameter Name="UserTypeID" Type="int" Mode="In" />
+        </Function>
+        <Function Name="InsertAppointment" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
+          <Parameter Name="UserID" Type="int" Mode="In" />
+          <Parameter Name="InstructorID" Type="int" Mode="In" />
+          <Parameter Name="DateTime" Type="datetime" Mode="In" />
+          <Parameter Name="ConfirmCode" Type="uniqueidentifier" Mode="In" />
         </Function>
         <Function Name="InsertAvailablity" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
           <Parameter Name="UserID" Type="int" Mode="In" />
@@ -168,7 +184,8 @@ warning 6002: The table/view 'TestDatabase.sys.database_firewall_rules' does not
     [Appointments].[StudentUserID] AS [StudentUserID], 
     [Appointments].[InstructorUserID] AS [InstructorUserID], 
     [Appointments].[Time] AS [Time], 
-    [Appointments].[IsConfirmed] AS [IsConfirmed]
+    [Appointments].[IsConfirmed] AS [IsConfirmed], 
+    [Appointments].[confirmCode] AS [confirmCode]
     FROM [dbo].[Appointments] AS [Appointments]</DefiningQuery>
           </EntitySet>
           <EntitySet Name="Availability" EntityType="Self.Availability" store:Type="Tables" store:Schema="dbo">
@@ -237,6 +254,9 @@ warning 6002: The table/view 'TestDatabase.sys.database_firewall_rules' does not
           <FunctionImport Name="ConfirmEmail">
           <Parameter Name="UserID" Mode="In" Type="Int32" />
           </FunctionImport>
+          <FunctionImport Name="DeleteAvail">
+          <Parameter Name="ID" Mode="In" Type="Int32" />
+          </FunctionImport>
           <FunctionImport Name="GetEmailFromUserID" ReturnType="Collection(String)">
           <Parameter Name="UserID" Mode="In" Type="Int32" />
           </FunctionImport>
@@ -252,6 +272,17 @@ warning 6002: The table/view 'TestDatabase.sys.database_firewall_rules' does not
             <Parameter Name="UserGroupID" Mode="In" Type="Int32" />
             <Parameter Name="UserTypeID" Mode="In" Type="Int32" />
           </FunctionImport>
+          <FunctionImport Name="InsertAppointment" ReturnType="Collection(Decimal)">
+            <Parameter Name="UserID" Mode="In" Type="Int32" />
+            <Parameter Name="InstructorID" Mode="In" Type="Int32" />
+            <Parameter Name="DateTime" Mode="In" Type="DateTime" />
+            <Parameter Name="ConfirmCode" Mode="In" Type="Guid" />
+          </FunctionImport>
+          <FunctionImport Name="InsertAvailablity" ReturnType="Collection(Decimal)">
+            <Parameter Name="UserID" Mode="In" Type="Int32" />
+            <Parameter Name="UserTypeID" Mode="In" Type="Int32" />
+            <Parameter Name="DateTime" Mode="In" Type="DateTime" />
+          </FunctionImport>
           <FunctionImport Name="Upload_Resume">
             <Parameter Name="UserID" Mode="In" Type="Int32" />
             <Parameter Name="File" Mode="In" Type="Binary" />
@@ -261,13 +292,12 @@ warning 6002: The table/view 'TestDatabase.sys.database_firewall_rules' does not
             <Parameter Name="Username" Mode="In" Type="String" />
             <Parameter Name="Password" Mode="In" Type="String" />
           </FunctionImport>
-          <FunctionImport Name="InsertAvailablity" ReturnType="Collection(Decimal)">
+          <FunctionImport Name="ConfirmApt">
+          <Parameter Name="AptID" Mode="In" Type="Int32" />
             <Parameter Name="UserID" Mode="In" Type="Int32" />
-            <Parameter Name="UserTypeID" Mode="In" Type="Int32" />
-            <Parameter Name="DateTime" Mode="In" Type="DateTime" />
           </FunctionImport>
-          <FunctionImport Name="DeleteAvail">
-            <Parameter Name="ID" Mode="In" Type="Int32" />
+          <FunctionImport Name="DeleteApt">
+          <Parameter Name="ID" Mode="In" Type="Int32" />
           </FunctionImport>
         </EntityContainer>
         <EntityType Name="UserGroup">
@@ -292,6 +322,7 @@ warning 6002: The table/view 'TestDatabase.sys.database_firewall_rules' does not
           <Property Name="ActivationCode" Type="Guid" />
           <Property Name="UserGroupID" Type="Int32" Nullable="false" />
           <Property Name="UserTypeID" Type="Int32" Nullable="false" />
+          <Property Name="HasAppointment" Type="Boolean" Nullable="false" />
         </EntityType>
         <EntityType Name="Appointment">
           <Key>
@@ -300,12 +331,14 @@ warning 6002: The table/view 'TestDatabase.sys.database_firewall_rules' does not
             <PropertyRef Name="InstructorUserID" />
             <PropertyRef Name="Time" />
             <PropertyRef Name="IsConfirmed" />
+            <PropertyRef Name="confirmCode" />
           </Key>
           <Property Name="AppointmentID" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
           <Property Name="StudentUserID" Type="Int32" Nullable="false" />
           <Property Name="InstructorUserID" Type="Int32" Nullable="false" />
           <Property Name="Time" Type="DateTime" Nullable="false" Precision="7" />
           <Property Name="IsConfirmed" Type="Boolean" Nullable="false" />
+          <Property Name="confirmCode" Type="Guid" Nullable="false" />
         </EntityType>
         <EntityType Name="Availability">
           <Key>
@@ -370,9 +403,10 @@ warning 6002: The table/view 'TestDatabase.sys.database_firewall_rules' does not
           <Property Name="modify_date" Type="DateTime" Nullable="false" Precision="3" />
         </EntityType>
         <ComplexType Name="GetUser_Result">
-          <Property Type="String" Name="FirstName" Nullable="false" MaxLength="50" />
-          <Property Type="String" Name="LastName" Nullable="false" MaxLength="50" />
-          <Property Type="String" Name="Email" Nullable="false" MaxLength="50" />
+          <Property Type="Int32" Name="UserID" Nullable="false" />
+          <Property Type="Int32" Name="UserGroupID" Nullable="false" />
+          <Property Type="Int32" Name="UserTypeID" Nullable="false" />
+          <Property Type="String" Name="Email" Nullable="false" MaxLength="200" />
         </ComplexType>
       </Schema>
     </edmx:ConceptualModels>
@@ -391,6 +425,7 @@ warning 6002: The table/view 'TestDatabase.sys.database_firewall_rules' does not
           <EntitySetMapping Name="UserLogins">
             <EntityTypeMapping TypeName="TestDatabaseModel.UserLogin">
               <MappingFragment StoreEntitySet="UserLogin">
+                <ScalarProperty Name="HasAppointment" ColumnName="HasAppointment" />
                 <ScalarProperty Name="UserTypeID" ColumnName="UserTypeID" />
                 <ScalarProperty Name="UserGroupID" ColumnName="UserGroupID" />
                 <ScalarProperty Name="ActivationCode" ColumnName="ActivationCode" />
@@ -408,6 +443,7 @@ warning 6002: The table/view 'TestDatabase.sys.database_firewall_rules' does not
           <EntitySetMapping Name="Appointments">
             <EntityTypeMapping TypeName="TestDatabaseModel.Appointment">
               <MappingFragment StoreEntitySet="Appointments">
+                <ScalarProperty Name="confirmCode" ColumnName="confirmCode" />
                 <ScalarProperty Name="IsConfirmed" ColumnName="IsConfirmed" />
                 <ScalarProperty Name="Time" ColumnName="Time" />
                 <ScalarProperty Name="InstructorUserID" ColumnName="InstructorUserID" />
@@ -470,22 +506,26 @@ warning 6002: The table/view 'TestDatabase.sys.database_firewall_rules' does not
           <FunctionImportMapping FunctionImportName="AddPasswordResetCode" FunctionName="TestDatabaseModel.Store.AddPasswordResetCode" />
           <FunctionImportMapping FunctionImportName="ChangePassword" FunctionName="TestDatabaseModel.Store.ChangePassword" />
           <FunctionImportMapping FunctionImportName="ConfirmEmail" FunctionName="TestDatabaseModel.Store.ConfirmEmail" />
+          <FunctionImportMapping FunctionImportName="DeleteAvail" FunctionName="TestDatabaseModel.Store.DeleteAvail" />
           <FunctionImportMapping FunctionImportName="GetEmailFromUserID" FunctionName="TestDatabaseModel.Store.GetEmailFromUserID" />
           <FunctionImportMapping FunctionImportName="GetHighestUserID" FunctionName="TestDatabaseModel.Store.GetHighestUserID" />
           <FunctionImportMapping FunctionImportName="GetUser" FunctionName="TestDatabaseModel.Store.GetUser">
             <ResultMapping>
               <ComplexTypeMapping TypeName="TestDatabaseModel.GetUser_Result">
-                <ScalarProperty Name="FirstName" ColumnName="FirstName" />
-                <ScalarProperty Name="LastName" ColumnName="LastName" />
+                <ScalarProperty Name="UserID" ColumnName="UserID" />
+                <ScalarProperty Name="UserGroupID" ColumnName="UserGroupID" />
+                <ScalarProperty Name="UserTypeID" ColumnName="UserTypeID" />
                 <ScalarProperty Name="Email" ColumnName="Email" />
               </ComplexTypeMapping>
             </ResultMapping>
           </FunctionImportMapping>
           <FunctionImportMapping FunctionImportName="Insert_User" FunctionName="TestDatabaseModel.Store.Insert_User" />
+          <FunctionImportMapping FunctionImportName="InsertAppointment" FunctionName="TestDatabaseModel.Store.InsertAppointment" />
+          <FunctionImportMapping FunctionImportName="InsertAvailablity" FunctionName="TestDatabaseModel.Store.InsertAvailablity" />
           <FunctionImportMapping FunctionImportName="Upload_Resume" FunctionName="TestDatabaseModel.Store.Upload_Resume" />
           <FunctionImportMapping FunctionImportName="Validate_User" FunctionName="TestDatabaseModel.Store.Validate_User" />
-          <FunctionImportMapping FunctionImportName="InsertAvailablity" FunctionName="TestDatabaseModel.Store.InsertAvailablity" />
-          <FunctionImportMapping FunctionImportName="DeleteAvail" FunctionName="TestDatabaseModel.Store.DeleteAvail" />
+          <FunctionImportMapping FunctionImportName="ConfirmApt" FunctionName="TestDatabaseModel.Store.ConfirmApt" />
+          <FunctionImportMapping FunctionImportName="DeleteApt" FunctionName="TestDatabaseModel.Store.DeleteApt" />
         </EntityContainerMapping>
       </Mapping>
     </edmx:Mappings>

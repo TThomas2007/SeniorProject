@@ -1,5 +1,5 @@
 ﻿@model TestWebApplication.Models.UserModel
-@using TestWebApplication.Models
+
 <!DOCTYPE html>
 
 <html>
@@ -18,13 +18,44 @@
         Welcome
         <b>@User.Identity.Name</b>
         <br />
+        <div class="form-group">
+            <div class="alert-danger">
+                @ViewBag.Message
+            </div>
+        </div>
         @if (Model.UserGroupID == 1)
         {
-            @*<form action="@Url.Action("UploadResume", "Home", new { NoteId = Model.aut_id })" method="post" enctype="multipart/form-data">
-                <label for="file1"> File name:</label>
-                <input type="file" name="file" id="file1" />
-                <input type="submit" value="Submit" />
-            </form>*@
+            if (Model.HasAppointment == true)
+            {
+                foreach (var apt in Model.Appointments)
+                {
+                    <br />
+                    @apt.Time.ToLongDateString()
+                    @:&nbsp;
+                    @apt.Time.ToShortTimeString()
+                    @:&nbsp;&nbsp;&nbsp;
+                    @Html.ActionLink("Cancel Appointment", "CancelApt", "Home", new { id = apt.AppointmentID }, null);
+                    <br />
+
+                }
+            }
+            else if (Model.HasAppointment == false)
+            {
+                using (Html.BeginForm("PickAppointment", "Home", FormMethod.Post, new { enctype = "multipart/form-data" }))
+                {
+                    @Html.AntiForgeryToken()
+                    @Html.ValidationSummary(true)
+                    <div class="form-group">
+                        @Html.Label("appointmentPick", "Please select a time from the dropdown below to set up an appointment!", htmlAttributes: new { @class = "control-label col-md-2" })
+                        <div class="col-sm-10">
+                            @Html.DropDownListFor(model => model.SelectedAvailId, new SelectList(Model.MatchedAvails, "AvailabilityID", "DateTime"), "--Select an appointment time--", null)
+                            @Html.HiddenFor(model => model.SelectedAvailId)
+                            @Html.HiddenFor(model => model.UserID)
+                        </div>
+                    </div>
+                    <input type="submit" value="Pick Time" />
+                }
+            }
         }
         @if (Model.UserGroupID != 1)
         {
@@ -37,11 +68,12 @@
                 <br />
                 @dt.DateTime.ToString();
                 @:&nbsp;&nbsp;&nbsp;
-                @Html.ActionLink("Remove Date/Time From Availablity", "RemoveAvail", "Home", new { id = dt.AvailabilityID, @type = "button", @class = "ui-button-text" });
+                @Html.ActionLink("Remove Date/Time From Availablity", "RemoveAvail", "Home", new { id = dt.AvailabilityID }, null);
                 <br />
 
             }
         }
+
 
         <br />
         @Html.ActionLink("Logout", "Logout", "Home")
