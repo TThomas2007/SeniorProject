@@ -21,6 +21,10 @@ namespace TestWebApplication.Controllers
         {
             return View();
         }
+        public ActionResult LiveInterview()
+        {
+            return View();
+        }
         public ActionResult AccountSuccess()
         {
             return View();

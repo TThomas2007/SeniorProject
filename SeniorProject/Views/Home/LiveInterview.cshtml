@@ -1,13 +1,13 @@
 ﻿
 @{
-    ViewBag.Title = "WebChat";
+    ViewBag.Title = "Live Interview";
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
 <html>
 <head>
     <title> OpenTok Getting Started </title>
-    <link href="css/app.css" rel="stylesheet" type="text/css">
+    <link href="~/Content/webchat.css" rel="stylesheet" type="text/css">
     <script src="https://static.opentok.com/v2/js/opentok.min.js"></script>
 </head>
 <body>
@@ -15,6 +15,13 @@
     <div id="videos">
         <div id="subscriber"></div>
         <div id="publisher"></div>
+    </div>
+
+    <div id="textchat">
+        <p id="history"></p>
+        <form>
+            <input type="text" placeholder="Input your text here" id="msgTxt"></input>
+        </form>
     </div>
 
     <script type="text/javascript" src="~/Scripts/webrtc.js"></script>

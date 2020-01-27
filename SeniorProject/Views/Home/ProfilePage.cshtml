@@ -36,7 +36,7 @@
                     @:&nbsp;&nbsp;&nbsp;
                     @Html.ActionLink("Cancel Appointment", "CancelApt", "Home", new { id = apt.AppointmentID }, null);
                     <br />
-
+                    @Html.ActionLink("Join Session", "LiveInterview", "Home");
                 }
             }
             else if (Model.HasAppointment == false)
