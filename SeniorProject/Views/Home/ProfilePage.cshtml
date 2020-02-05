@@ -3,6 +3,7 @@
 <!DOCTYPE html>
 
 <html>
+
 <head>
     <meta name="viewport" content="width=device-width" />
     <title>Profile</title>
@@ -12,17 +13,19 @@
             font-size: 10pt;
         }
     </style>
+    <script src="~/Scripts/moment.js"></script>
 </head>
 <body>
+    <div class="form-group">
+        <div class="alert-danger">
+            @ViewBag.Message
+        </div>
+    </div>
     <div>
         Welcome
         <b>@User.Identity.Name</b>
         <br />
-        <div class="form-group">
-            <div class="alert-danger">
-                @ViewBag.Message
-            </div>
-        </div>
+
         @if (Model.UserGroupID == 1)
         {
             if (Model.HasAppointment == true)
@@ -35,9 +38,14 @@
                     @apt.Time.ToShortTimeString()
                     @:&nbsp;&nbsp;&nbsp;
                     @Html.ActionLink("Cancel Appointment", "CancelApt", "Home", new { id = apt.AppointmentID }, null);
-                    <br />
-                    @Html.ActionLink("Join Session", "LiveInterview", "Home");
+
                 }
+                <br />
+                <br />
+                <br />
+                <div id="enterInterview">
+                    @Html.ActionLink("Join Session", "LiveInterview", "Home")
+                </div>
             }
             else if (Model.HasAppointment == false)
             {
@@ -70,7 +78,16 @@
                 @:&nbsp;&nbsp;&nbsp;
                 @Html.ActionLink("Remove Date/Time From Availablity", "RemoveAvail", "Home", new { id = dt.AvailabilityID }, null);
                 <br />
+                <br />
 
+            }
+            if (Model.HasAppointment == true)
+            {
+                <br />
+                <br />
+                <div id="enterInterview">
+                    @Html.ActionLink("Join Session", "LiveInterview", "Home")
+                </div>
             }
         }
 
@@ -78,5 +95,21 @@
         <br />
         @Html.ActionLink("Logout", "Logout", "Home")
     </div>
+
 </body>
 </html>
+@section scripts{
+<script type="text/javascript">
+    $(document).ready(function () {
+        var dateTime = new Date("@Model.AppointmentTime");
+        dateTime = moment(dateTime);
+        var now = moment();
+        var beforeTime = dateTime.subtract(30, 'minutes');
+
+        if (now.isBefore(dateTime) && now.isAfter(beforeTime) ) {
+            $("#enterInterview").show();;
+        }
+
+    });
+</script>
+}

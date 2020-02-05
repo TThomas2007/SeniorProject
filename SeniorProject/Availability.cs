@@ -18,5 +18,8 @@ namespace TestWebApplication
         public int InstructorUserID { get; set; }
         public System.DateTime DateTime { get; set; }
         public int UserTypeID { get; set; }
+    
+        public virtual UserLogin UserLogin { get; set; }
+        public virtual UserType UserType { get; set; }
     }
 }

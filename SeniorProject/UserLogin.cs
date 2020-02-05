@@ -14,6 +14,12 @@ namespace TestWebApplication
     
     public partial class UserLogin
     {
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2214:DoNotCallOverridableMethodsInConstructors")]
+        public UserLogin()
+        {
+            this.Availabilities = new HashSet<Availability>();
+        }
+    
         public int UserID { get; set; }
         public string Username { get; set; }
         public string Password { get; set; }
@@ -26,5 +32,10 @@ namespace TestWebApplication
         public int UserGroupID { get; set; }
         public int UserTypeID { get; set; }
         public bool HasAppointment { get; set; }
+    
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        public virtual ICollection<Availability> Availabilities { get; set; }
+        public virtual UserGroup UserGroup { get; set; }
+        public virtual UserType UserType { get; set; }
     }
 }

@@ -1,20 +1,17 @@
 ﻿using System;
 using TestWebApplication.Content;
-using System.Collections.Generic;
-using System.Data.SqlClient;
+
 using System.Linq;
 using System.Web;
 using System.Web.Mvc;
 using TestWebApplication.Models;
 using System.Web.Security;
 using System.Net.Mail;
-using System.Net.Mime;
-using System.ComponentModel;
 using System.Net;
 
 namespace TestWebApplication.Controllers
 {
-    
+
     public class HomeController : Controller
     {
         public ActionResult Home()
@@ -86,7 +83,7 @@ namespace TestWebApplication.Controllers
         public void SendCodeEmail(string email, string code, string action, UserModel user)
         {
             TestDatabaseEntities context = new TestDatabaseEntities();
-
+            user.Username = context.UserLogins.Where(x => x.UserID == user.UserID).FirstOrDefault().Username;
             if (action == "verify")
             {
                 var verifyUrl = "/Home/VerifyAccount?activationCode=" + code;
@@ -267,12 +264,25 @@ namespace TestWebApplication.Controllers
                 if(user.UserGroupID != 1)
                 {
 
-                    model.AvailList = context.Availabilities.Where(x => x.InstructorUserID == model.UserID).ToList();
+                    model.AvailList = context.Availabilities.Where(x => x.InstructorUserID == user.UserID).ToList();
                 }
                 if (user.HasAppointment == true)
                 {
 
-                    model.Appointments = context.Appointments.Where(x => x.StudentUserID == model.UserID).ToList();
+                    model.Appointments = context.Appointments.Where(x => x.StudentUserID == user.UserID).ToList();
+                    if( model.UserGroupID == 1)
+                    {
+                        model.AppointmentTime = context.GetStudentAppointmentTime(user.UserID).FirstOrDefault();
+                    }
+
+                    if (model.UserGroupID != 1)
+                    {
+                        model.AppointmentTime = context.GetInstructorAppointmentTime(user.UserID).FirstOrDefault();
+                    }
+                }
+                if (user.HasAppointment == false && user.UserGroupID == 1)
+                {
+                    model.MatchedAvails = context.Availabilities.Where(x => x.UserTypeID == user.UserTypeID).ToList();
                 }
                 return View(model);
             }
@@ -400,14 +410,22 @@ namespace TestWebApplication.Controllers
             TestDatabaseEntities context = new TestDatabaseEntities();
             if (user != null)
             {
-                var selection = context.Availabilities.Where(x => x.AvailabilityID == user.SelectedAvailId).FirstOrDefault();
-                var instructor = context.UserLogins.Where(x => x.UserID == selection.InstructorUserID).FirstOrDefault();
-                var confirmCode = Guid.NewGuid();
-                context.InsertAppointment(user.UserID, selection.InstructorUserID, selection.DateTime, confirmCode);
-                
-                SendCodeEmail(instructor.Email, confirmCode.ToString(), "confirmApt", user);
-                ViewBag.Message = "You have successfully asked for an meeting with " + instructor.Username.ToString() + ". We will notify you when they have confirmed the appointment.";
+                if (context.Appointments.Where(x => x.StudentUserID == user.UserID).FirstOrDefault() == null)
+                {
+                    var selection = context.Availabilities.Where(x => x.AvailabilityID == user.SelectedAvailId).FirstOrDefault();
+                    var instructor = context.UserLogins.Where(x => x.UserID == selection.InstructorUserID).FirstOrDefault();
+                    var confirmCode = Guid.NewGuid();
+                    context.InsertAppointment(user.UserID, selection.InstructorUserID, selection.DateTime, confirmCode, selection.AvailabilityID);
+
+                    SendCodeEmail(instructor.Email, confirmCode.ToString(), "confirmApt", user);
+                    ViewBag.Message = "You have successfully asked for an meeting with " + instructor.Username.ToString() + ". We will notify you when they have confirmed the appointment.";
+                }
+                else
+                {
+                    ViewBag.Message = "You have already signed up for an appointment.";
+                }
             }
+
 
             return RedirectToAction("ProfilePage");
         }
@@ -420,7 +438,7 @@ namespace TestWebApplication.Controllers
             var instructor = context.UserLogins.Where(x => x.UserID == v.InstructorUserID).FirstOrDefault();
             if (v != null)
             {
-                context.ConfirmApt(v.AppointmentID, aptUser.UserID);
+                context.ConfirmApt(v.AppointmentID, aptUser.UserID, instructor.UserID);
 
                 
                 var fromEmail = new MailAddress("prepinseniorproject@gmail.com", "PrepIN Support");
@@ -453,7 +471,8 @@ namespace TestWebApplication.Controllers
 
 
             ViewBag.Message = "You have successfully confirmed your appointment with " + aptUser.Username + ".";
-                return RedirectToAction("ProfilePage");
+               // RemoveAvail(v.AppointmentID);
+                return RedirectToAction("RemoveAvail", new { id = v.OriginalAvailID});
             }
             else
             {

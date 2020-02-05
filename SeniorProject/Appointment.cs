@@ -20,5 +20,6 @@ namespace TestWebApplication
         public System.DateTime Time { get; set; }
         public bool IsConfirmed { get; set; }
         public System.Guid confirmCode { get; set; }
+        public int OriginalAvailID { get; set; }
     }
 }

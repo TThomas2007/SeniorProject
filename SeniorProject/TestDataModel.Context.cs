@@ -27,13 +27,13 @@ namespace TestWebApplication
             throw new UnintentionalCodeFirstException();
         }
     
-        public virtual DbSet<UserGroup> UserGroups { get; set; }
-        public virtual DbSet<UserLogin> UserLogins { get; set; }
         public virtual DbSet<Appointment> Appointments { get; set; }
         public virtual DbSet<Availability> Availabilities { get; set; }
+        public virtual DbSet<UserGroup> UserGroups { get; set; }
+        public virtual DbSet<UserLogin> UserLogins { get; set; }
+        public virtual DbSet<UserType> UserTypes { get; set; }
         public virtual DbSet<Resume> Resumes { get; set; }
         public virtual DbSet<User> Users { get; set; }
-        public virtual DbSet<UserType> UserTypes { get; set; }
         public virtual DbSet<database_firewall_rules> database_firewall_rules { get; set; }
     
         public virtual int AddPasswordResetCode(string email, string resetCode)
@@ -62,6 +62,23 @@ namespace TestWebApplication
             return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction("ChangePassword", passwordParameter, resetCodeParameter);
         }
     
+        public virtual int ConfirmApt(Nullable<int> aptID, Nullable<int> studentUserID, Nullable<int> instructorUserID)
+        {
+            var aptIDParameter = aptID.HasValue ?
+                new ObjectParameter("AptID", aptID) :
+                new ObjectParameter("AptID", typeof(int));
+    
+            var studentUserIDParameter = studentUserID.HasValue ?
+                new ObjectParameter("StudentUserID", studentUserID) :
+                new ObjectParameter("StudentUserID", typeof(int));
+    
+            var instructorUserIDParameter = instructorUserID.HasValue ?
+                new ObjectParameter("InstructorUserID", instructorUserID) :
+                new ObjectParameter("InstructorUserID", typeof(int));
+    
+            return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction("ConfirmApt", aptIDParameter, studentUserIDParameter, instructorUserIDParameter);
+        }
+    
         public virtual int ConfirmEmail(Nullable<int> userID)
         {
             var userIDParameter = userID.HasValue ?
@@ -69,6 +86,15 @@ namespace TestWebApplication
                 new ObjectParameter("UserID", typeof(int));
     
             return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction("ConfirmEmail", userIDParameter);
+        }
+    
+        public virtual int DeleteApt(Nullable<int> iD)
+        {
+            var iDParameter = iD.HasValue ?
+                new ObjectParameter("ID", iD) :
+                new ObjectParameter("ID", typeof(int));
+    
+            return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction("DeleteApt", iDParameter);
         }
     
         public virtual int DeleteAvail(Nullable<int> iD)
@@ -92,6 +118,24 @@ namespace TestWebApplication
         public virtual ObjectResult<Nullable<int>> GetHighestUserID()
         {
             return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction<Nullable<int>>("GetHighestUserID");
+        }
+    
+        public virtual ObjectResult<Nullable<System.DateTime>> GetInstructorAppointmentTime(Nullable<int> userid)
+        {
+            var useridParameter = userid.HasValue ?
+                new ObjectParameter("Userid", userid) :
+                new ObjectParameter("Userid", typeof(int));
+    
+            return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction<Nullable<System.DateTime>>("GetInstructorAppointmentTime", useridParameter);
+        }
+    
+        public virtual ObjectResult<Nullable<System.DateTime>> GetStudentAppointmentTime(Nullable<int> userid)
+        {
+            var useridParameter = userid.HasValue ?
+                new ObjectParameter("Userid", userid) :
+                new ObjectParameter("Userid", typeof(int));
+    
+            return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction<Nullable<System.DateTime>>("GetStudentAppointmentTime", useridParameter);
         }
     
         public virtual ObjectResult<GetUser_Result> GetUser(string username)
@@ -132,7 +176,7 @@ namespace TestWebApplication
             return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction<Nullable<int>>("Insert_User", usernameParameter, passwordParameter, emailParameter, activationCodeParameter, userGroupIDParameter, userTypeIDParameter);
         }
     
-        public virtual ObjectResult<Nullable<decimal>> InsertAppointment(Nullable<int> userID, Nullable<int> instructorID, Nullable<System.DateTime> dateTime, Nullable<System.Guid> confirmCode)
+        public virtual ObjectResult<Nullable<decimal>> InsertAppointment(Nullable<int> userID, Nullable<int> instructorID, Nullable<System.DateTime> dateTime, Nullable<System.Guid> confirmCode, Nullable<int> availID)
         {
             var userIDParameter = userID.HasValue ?
                 new ObjectParameter("UserID", userID) :
@@ -150,7 +194,11 @@ namespace TestWebApplication
                 new ObjectParameter("ConfirmCode", confirmCode) :
                 new ObjectParameter("ConfirmCode", typeof(System.Guid));
     
-            return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction<Nullable<decimal>>("InsertAppointment", userIDParameter, instructorIDParameter, dateTimeParameter, confirmCodeParameter);
+            var availIDParameter = availID.HasValue ?
+                new ObjectParameter("AvailID", availID) :
+                new ObjectParameter("AvailID", typeof(int));
+    
+            return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction<Nullable<decimal>>("InsertAppointment", userIDParameter, instructorIDParameter, dateTimeParameter, confirmCodeParameter, availIDParameter);
         }
     
         public virtual ObjectResult<Nullable<decimal>> InsertAvailablity(Nullable<int> userID, Nullable<int> userTypeID, Nullable<System.DateTime> dateTime)
@@ -198,28 +246,6 @@ namespace TestWebApplication
                 new ObjectParameter("Password", typeof(string));
     
             return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction<Nullable<int>>("Validate_User", usernameParameter, passwordParameter);
-        }
-    
-        public virtual int ConfirmApt(Nullable<int> aptID, Nullable<int> userID)
-        {
-            var aptIDParameter = aptID.HasValue ?
-                new ObjectParameter("AptID", aptID) :
-                new ObjectParameter("AptID", typeof(int));
-    
-            var userIDParameter = userID.HasValue ?
-                new ObjectParameter("UserID", userID) :
-                new ObjectParameter("UserID", typeof(int));
-    
-            return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction("ConfirmApt", aptIDParameter, userIDParameter);
-        }
-    
-        public virtual int DeleteApt(Nullable<int> iD)
-        {
-            var iDParameter = iD.HasValue ?
-                new ObjectParameter("ID", iD) :
-                new ObjectParameter("ID", typeof(int));
-    
-            return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction("DeleteApt", iDParameter);
         }
     }
 }

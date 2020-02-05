@@ -5,14 +5,18 @@
     <!-- Diagram content (shape and connector positions) -->
     <edmx:Diagrams>
       <Diagram DiagramId="26fedf9ac5ff4211af29bb8b62bb4ca9" Name="Diagram1">
+        <EntityTypeShape EntityType="TestDatabaseModel.Appointment" Width="1.5" PointX="5.75" PointY="6.75" />
+        <EntityTypeShape EntityType="TestDatabaseModel.Availability" Width="1.5" PointX="5.25" PointY="3.5" />
         <EntityTypeShape EntityType="TestDatabaseModel.UserGroup" Width="1.5" PointX="0.75" PointY="0.75" />
-        <EntityTypeShape EntityType="TestDatabaseModel.UserLogin" Width="1.5" PointX="2.75" PointY="0.75" />
-        <EntityTypeShape EntityType="TestDatabaseModel.Appointment" Width="1.5" PointX="4.75" PointY="0.75" />
-        <EntityTypeShape EntityType="TestDatabaseModel.Availability" Width="1.5" PointX="4.75" PointY="3.75" />
-        <EntityTypeShape EntityType="TestDatabaseModel.Resume" Width="1.5" PointX="0.75" PointY="5.75" />
-        <EntityTypeShape EntityType="TestDatabaseModel.User" Width="1.5" PointX="6.75" PointY="0.75" />
-        <EntityTypeShape EntityType="TestDatabaseModel.UserType" Width="1.5" PointX="2.75" PointY="6.75" />
-        <EntityTypeShape EntityType="TestDatabaseModel.database_firewall_rules" Width="1.5" PointX="6.75" PointY="3.75" />
+        <EntityTypeShape EntityType="TestDatabaseModel.UserLogin" Width="1.5" PointX="3" PointY="2.625" />
+        <EntityTypeShape EntityType="TestDatabaseModel.UserType" Width="1.5" PointX="0.75" PointY="3.625" />
+        <EntityTypeShape EntityType="TestDatabaseModel.Resume" Width="1.5" PointX="5.75" PointY="0.75" />
+        <EntityTypeShape EntityType="TestDatabaseModel.User" Width="1.5" PointX="7.75" PointY="0.75" />
+        <EntityTypeShape EntityType="TestDatabaseModel.database_firewall_rules" Width="1.5" PointX="0.75" PointY="7.75" />
+        <AssociationConnector Association="TestDatabaseModel.FK_Availability_UserLogin" />
+        <AssociationConnector Association="TestDatabaseModel.FK_Availability_UserType" />
+        <AssociationConnector Association="TestDatabaseModel.FK_UserLogin_UserGroup" />
+        <AssociationConnector Association="TestDatabaseModel.FK_UserLogin_UserType" />
       </Diagram>
     </edmx:Diagrams>
   </edmx:Designer>

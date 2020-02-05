@@ -14,7 +14,16 @@ namespace TestWebApplication
     
     public partial class UserGroup
     {
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2214:DoNotCallOverridableMethodsInConstructors")]
+        public UserGroup()
+        {
+            this.UserLogins = new HashSet<UserLogin>();
+        }
+    
         public int UserGroupID { get; set; }
         public string Description { get; set; }
+    
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        public virtual ICollection<UserLogin> UserLogins { get; set; }
     }
 }
