@@ -49,13 +49,20 @@ namespace TestWebApplication.Controllers
             var passwordHash = Crypto.Hash(user.Password);
             var obj1 = context.UserLogins.Where(x => x.Username.Equals(user.Username)).FirstOrDefault();
             var obj2 = context.UserLogins.Where(x => x.Email.Equals(user.Email)).FirstOrDefault();
-            if (obj1 != null || obj2 != null)
+            if (obj1 != null)
             {
                 if (string.Compare(user.Username, obj1.Username) == 0)
                 {
                     ViewBag.message = "Username already exists. Please try again.";
                     return RedirectToAction("CreateUser");
                 }
+                else
+                {
+                    ViewBag.message = "Unknown error has occured.";
+                    return RedirectToAction("Index");
+                }
+            }
+            if (obj2 != null) {
                 if (string.Compare(user.Email, obj2.Email) == 0)
                 {
                     ViewBag.message = "Email already exists. Please try again.";
@@ -64,9 +71,11 @@ namespace TestWebApplication.Controllers
                 else
                 {
                     ViewBag.message = "Unknown error has occured.";
-                        return RedirectToAction("Index");
+                    return RedirectToAction("Index");
                 }
             }
+           
+            
             else
             {
                 context.Insert_User(user.Username, passwordHash, user.Email, activationCode, (int)user.UserGroup, (int)user.UserType);
@@ -83,14 +92,16 @@ namespace TestWebApplication.Controllers
         public void SendCodeEmail(string email, string code, string action, UserModel user)
         {
             TestDatabaseEntities context = new TestDatabaseEntities();
-            user.Username = context.UserLogins.Where(x => x.UserID == user.UserID).FirstOrDefault().Username;
+            var fromEmail = new MailAddress("prepinservice@outlook.com", "PrepIN Support");
+            var toEmail = new MailAddress(email);
+            var fromEmailPassword = "prepin2020";
+
+
             if (action == "verify")
             {
                 var verifyUrl = "/Home/VerifyAccount?activationCode=" + code;
                 var link = Request.Url.AbsoluteUri.Replace(Request.Url.PathAndQuery, verifyUrl);
-                var fromEmail = new MailAddress("prepinseniorproject@gmail.com", "PrepIN Support");
-                var toEmail = new MailAddress(email);
-                var fromEmailPassword = "seniorproject20";
+                
                 string subject = "Account has been created for you!";
 
                 string body = "</br> </br> Your new account has been created. Click <a href='" + link + "'>here</a> to verify your account";
@@ -98,11 +109,12 @@ namespace TestWebApplication.Controllers
 
                 var smtp = new SmtpClient
                 {
-                    Host = "smtp.gmail.com",
+                    Host = "smtp.office365.com",
                     Port = 587,
                     EnableSsl = true,
                     DeliveryMethod = SmtpDeliveryMethod.Network,
                     UseDefaultCredentials = false,
+                    
                     Credentials = new NetworkCredential(fromEmail.Address, fromEmailPassword)
 
                 };
@@ -119,9 +131,6 @@ namespace TestWebApplication.Controllers
             {
                 var verifyUrl = "/Home/ResetPasswordCodeValidation?resetCode=" + code;
                 var link = Request.Url.AbsoluteUri.Replace(Request.Url.PathAndQuery, verifyUrl);
-                var fromEmail = new MailAddress("prepinseniorproject@gmail.com", "PrepIN Support");
-                var toEmail = new MailAddress(email);
-                var fromEmailPassword = "seniorproject20";
                 string subject = "Reset Password";
 
                 string body = "</br> </br> Here is the password reset email you requested. Click <a href='" + link + "'>here</a> to hange your password.";
@@ -129,7 +138,7 @@ namespace TestWebApplication.Controllers
 
                 var smtp = new SmtpClient
                 {
-                    Host = "smtp.gmail.com",
+                    Host = "smtp.office365.com",
                     Port = 587,
                     EnableSsl = true,
                     DeliveryMethod = SmtpDeliveryMethod.Network,
@@ -152,17 +161,17 @@ namespace TestWebApplication.Controllers
                 var denyUrl = "/Home/DenyApt?denyCode=" + code;
                 var acceptLink = Request.Url.AbsoluteUri.Replace(Request.Url.PathAndQuery, acceptUrl);
                 var denyLink = Request.Url.AbsoluteUri.Replace(Request.Url.PathAndQuery, denyUrl);
-                var fromEmail = new MailAddress("prepinseniorproject@gmail.com", "PrepIN Support");
-                var toEmail = new MailAddress(email);
-                var fromEmailPassword = "seniorproject20";
+                //var fromEmail = new MailAddress("prepinseniorproject@gmail.com", "PrepIN Support");
+                //var toEmail = new MailAddress(email);
+                //var fromEmailPassword = "seniorproject20";
                 string subject = "Confirm Appointment";
 
-                string body = "</br> </br> You have a new appointment set up with " + user.Username.ToString() + ". Click <a href='" + acceptLink + "'>here</a> to accept this appointment. Click <a href='" + denyLink + "'>here</a> to deny this appointment.";
+                string body = "</br> </br> You have a new appointment set up with a student. Click <a href='" + acceptLink + "'>here</a> to accept this appointment. Click <a href='" + denyLink + "'>here</a> to deny this appointment.";
 
 
                 var smtp = new SmtpClient
                 {
-                    Host = "smtp.gmail.com",
+                    Host = "smtp.office365.com",
                     Port = 587,
                     EnableSsl = true,
                     DeliveryMethod = SmtpDeliveryMethod.Network,
