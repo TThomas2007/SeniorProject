@@ -473,9 +473,9 @@ namespace TestWebApplication.Controllers
                 context.ConfirmApt(v.AppointmentID, aptUser.UserID, instructor.UserID);
 
                 
-                var fromEmail = new MailAddress("prepinseniorproject@gmail.com", "PrepIN Support");
+                var fromEmail = new MailAddress("prepinservice@outlook.com", "PrepIN Support");
                 var toEmail = new MailAddress(aptUser.Email);
-                var fromEmailPassword = "seniorproject20";
+                var fromEmailPassword = "prepin2020";
                 string subject = "Confirmation of Appointment";
 
                 string body = "</br> </br> Your appointment with " + instructor.Username.ToString() + " for " + v.Time.ToLongDateString() + " at " +v.Time.ToShortTimeString() + " has been confirmed!";
@@ -483,7 +483,7 @@ namespace TestWebApplication.Controllers
 
                 var smtp = new SmtpClient
                 {
-                    Host = "smtp.gmail.com",
+                    Host = "smtp.outlook.com",
                     Port = 587,
                     EnableSsl = true,
                     DeliveryMethod = SmtpDeliveryMethod.Network,
