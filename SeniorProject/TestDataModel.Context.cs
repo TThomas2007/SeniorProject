@@ -88,13 +88,21 @@ namespace TestWebApplication
             return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction("ConfirmEmail", userIDParameter);
         }
     
-        public virtual int DeleteApt(Nullable<int> iD)
+        public virtual int DeleteApt(Nullable<int> aptID, Nullable<int> studentUserID, Nullable<int> interviewerID)
         {
-            var iDParameter = iD.HasValue ?
-                new ObjectParameter("ID", iD) :
-                new ObjectParameter("ID", typeof(int));
+            var aptIDParameter = aptID.HasValue ?
+                new ObjectParameter("AptID", aptID) :
+                new ObjectParameter("AptID", typeof(int));
     
-            return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction("DeleteApt", iDParameter);
+            var studentUserIDParameter = studentUserID.HasValue ?
+                new ObjectParameter("StudentUserID", studentUserID) :
+                new ObjectParameter("StudentUserID", typeof(int));
+    
+            var interviewerIDParameter = interviewerID.HasValue ?
+                new ObjectParameter("InterviewerID", interviewerID) :
+                new ObjectParameter("InterviewerID", typeof(int));
+    
+            return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction("DeleteApt", aptIDParameter, studentUserIDParameter, interviewerIDParameter);
         }
     
         public virtual int DeleteAvail(Nullable<int> iD)
@@ -246,6 +254,15 @@ namespace TestWebApplication
                 new ObjectParameter("Password", typeof(string));
     
             return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction<Nullable<int>>("Validate_User", usernameParameter, passwordParameter);
+        }
+    
+        public virtual ObjectResult<string> GetUserNameFromID(Nullable<int> userID)
+        {
+            var userIDParameter = userID.HasValue ?
+                new ObjectParameter("UserID", userID) :
+                new ObjectParameter("UserID", typeof(int));
+    
+            return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction<string>("GetUserNameFromID", userIDParameter);
         }
     }
 }

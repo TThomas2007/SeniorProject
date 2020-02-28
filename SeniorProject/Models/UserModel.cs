@@ -27,6 +27,7 @@ namespace TestWebApplication.Models
         public List<Availability> MatchedAvails { get; set; }
         public List<Appointment> Appointments { get; set; }
         public DateTime? AppointmentTime { get; set; }
+        public string WhoIsMyAptWith { get; set; }
         
     }
 }

@@ -170,7 +170,9 @@ warning 6002: The table/view 'TestDatabase.sys.database_firewall_rules' does not
           <Parameter Name="UserID" Type="int" Mode="In" />
         </Function>
         <Function Name="DeleteApt" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
-          <Parameter Name="ID" Type="int" Mode="In" />
+          <Parameter Name="AptID" Type="int" Mode="In" />
+          <Parameter Name="StudentUserID" Type="int" Mode="In" />
+          <Parameter Name="InterviewerID" Type="int" Mode="In" />
         </Function>
         <Function Name="DeleteAvail" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
           <Parameter Name="ID" Type="int" Mode="In" />
@@ -187,6 +189,9 @@ warning 6002: The table/view 'TestDatabase.sys.database_firewall_rules' does not
         </Function>
         <Function Name="GetUser" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
           <Parameter Name="Username" Type="nvarchar" Mode="In" />
+        </Function>
+        <Function Name="GetUserNameFromID" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
+          <Parameter Name="UserID" Type="int" Mode="In" />
         </Function>
         <Function Name="Insert_User" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
           <Parameter Name="Username" Type="nvarchar" Mode="In" />
@@ -313,7 +318,9 @@ warning 6002: The table/view 'TestDatabase.sys.database_firewall_rules' does not
           <Parameter Name="UserID" Mode="In" Type="Int32" />
           </FunctionImport>
           <FunctionImport Name="DeleteApt">
-          <Parameter Name="ID" Mode="In" Type="Int32" />
+            <Parameter Name="AptID" Mode="In" Type="Int32" />
+            <Parameter Name="StudentUserID" Mode="In" Type="Int32" />
+            <Parameter Name="InterviewerID" Mode="In" Type="Int32" />
           </FunctionImport>
           <FunctionImport Name="DeleteAvail">
           <Parameter Name="ID" Mode="In" Type="Int32" />
@@ -359,6 +366,9 @@ warning 6002: The table/view 'TestDatabase.sys.database_firewall_rules' does not
           <FunctionImport Name="Validate_User" ReturnType="Collection(Int32)">
             <Parameter Name="Username" Mode="In" Type="String" />
             <Parameter Name="Password" Mode="In" Type="String" />
+          </FunctionImport>
+          <FunctionImport Name="GetUserNameFromID" ReturnType="Collection(String)">
+          <Parameter Name="UserID" Mode="In" Type="Int32" />
           </FunctionImport>
         </EntityContainer>
         <EntityType Name="Appointment">
@@ -638,6 +648,7 @@ warning 6002: The table/view 'TestDatabase.sys.database_firewall_rules' does not
           <FunctionImportMapping FunctionImportName="InsertAvailablity" FunctionName="TestDatabaseModel.Store.InsertAvailablity" />
           <FunctionImportMapping FunctionImportName="Upload_Resume" FunctionName="TestDatabaseModel.Store.Upload_Resume" />
           <FunctionImportMapping FunctionImportName="Validate_User" FunctionName="TestDatabaseModel.Store.Validate_User" />
+          <FunctionImportMapping FunctionImportName="GetUserNameFromID" FunctionName="TestDatabaseModel.Store.GetUserNameFromID" />
         </EntityContainerMapping>
       </Mapping>
     </edmx:Mappings>

@@ -7,13 +7,8 @@
 <head>
     <meta name="viewport" content="width=device-width" />
     <title>Profile</title>
-    <style type="text/css">
-        body {
-            font-family: Arial;
-            font-size: 10pt;
-        }
-    </style>
-    <script src="~/Scripts/moment.js"></script>
+    <script src="~/Scripts/moment.min.js"></script>
+    <script src="~/Scripts/jquery-3.4.1.min.js"></script>
 </head>
 <body>
     <div class="form-group">
@@ -32,20 +27,19 @@
             {
                 foreach (var apt in Model.Appointments)
                 {
+                    
+                    @:You currently have an appointment scheduled for @apt.Time.ToLongDateString() at @apt.Time.ToShortTimeString().
                     <br />
-                    @apt.Time.ToLongDateString()
-                    @:&nbsp;
-                    @apt.Time.ToShortTimeString()
-                    @:&nbsp;&nbsp;&nbsp;
-                    @Html.ActionLink("Cancel Appointment", "CancelApt", "Home", new { id = apt.AppointmentID }, null);
+                    @Html.ActionLink("Cancel Appointment", "CancelApt", "Home", new { id = apt.AppointmentID, studentId = apt.StudentUserID, interviewerId = apt.InstructorUserID }, null);
+                    <br />
 
                 }
-                <br />
-                <br />
-                <br />
-                <div id="enterInterview">
+                <div id="enterInterview" style="display:none">
+                    Your Interview is getting ready to start at @Model.AppointmentTime.Value.ToShortTimeString()! Click below to join session.
+                    <br />
                     @Html.ActionLink("Join Session", "LiveInterview", "Home")
                 </div>
+
             }
             else if (Model.HasAppointment == false)
             {
@@ -83,11 +77,21 @@
             }
             if (Model.HasAppointment == true)
             {
-                <br />
-                <br />
-                <div id="enterInterview">
+                foreach (var apt in Model.Appointments)
+                {
+
+                    @:You currently have an appointment scheduled for @apt.Time.ToLongDateString() at @apt.Time.ToShortTimeString().
+                    <br />
+                    @Html.ActionLink("Cancel Appointment", "CancelApt", "Home", new { id = apt.AppointmentID, studentId = apt.StudentUserID, interviewerId = apt.InstructorUserID }, null);
+
+
+                }
+                <div id="enterInterview" style="display:none">
+                    Your Interview is getting ready to start at @Model.AppointmentTime.Value.ToShortTimeString()! Click below to join session.
+                    <br />
                     @Html.ActionLink("Join Session", "LiveInterview", "Home")
                 </div>
+
             }
         }
 
@@ -99,17 +103,23 @@
 </body>
 </html>
 @section scripts{
-<script type="text/javascript">
-    $(document).ready(function () {
-        var dateTime = new Date("@Model.AppointmentTime");
-        dateTime = moment(dateTime);
-        var now = moment();
-        var beforeTime = dateTime.subtract(30, 'minutes');
+    
+    <script type="text/javascript">
 
-        if (now.isBefore(dateTime) && now.isAfter(beforeTime) ) {
-            $("#enterInterview").show();;
-        }
+        var dateInitial = $("#hiddenDate").val();
+        var date = new Date(dateInitial);
+        var dateTime = moment(date);
+        var beforeTime = moment(date).subtract(30, 'minutes');
+        debugger;
+        $(document).ready(function () {
+            
+                
+            
+            
+            if (moment().isBefore(dateTime) && moment().isAfter(beforeTime)) {
+                $("#enterInterview").show();  
+            }
 
     });
-</script>
+    </script>
 }

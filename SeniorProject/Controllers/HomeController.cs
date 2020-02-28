@@ -81,7 +81,7 @@ namespace TestWebApplication.Controllers
                 context.Insert_User(user.Username, passwordHash, user.Email, activationCode, (int)user.UserGroup, (int)user.UserType);
 
 
-                SendCodeEmail(user.Email, activationCode.ToString(), "verify", null);
+                SendVerificationCodeEmail(user.Email, activationCode.ToString());
 
                 return RedirectToAction("AccountSuccess");
             }
@@ -89,17 +89,16 @@ namespace TestWebApplication.Controllers
         }
 
         [NonAction]
-        public void SendCodeEmail(string email, string code, string action, UserModel user)
+        public void SendVerificationCodeEmail(string email, string code)
         {
-            TestDatabaseEntities context = new TestDatabaseEntities();
+            
             var fromEmail = new MailAddress("prepinservice@outlook.com", "PrepIN Support");
             var toEmail = new MailAddress(email);
-            var fromEmailPassword = "prepin2020";
+           string fromEmailPassword = "prepin2020";
 
 
-            if (action == "verify")
-            {
-                var verifyUrl = "/Home/VerifyAccount?activationCode=" + code;
+            
+                string verifyUrl = "/Home/VerifyAccount?activationCode=" + code;
                 var link = Request.Url.AbsoluteUri.Replace(Request.Url.PathAndQuery, verifyUrl);
                 
                 string subject = "Account has been created for you!";
@@ -126,70 +125,83 @@ namespace TestWebApplication.Controllers
                     IsBodyHtml = true
                 })
                     smtp.Send(message);
-            }
-            else if (action == "reset")
-            {
-                var verifyUrl = "/Home/ResetPasswordCodeValidation?resetCode=" + code;
-                var link = Request.Url.AbsoluteUri.Replace(Request.Url.PathAndQuery, verifyUrl);
-                string subject = "Reset Password";
-
-                string body = "</br> </br> Here is the password reset email you requested. Click <a href='" + link + "'>here</a> to hange your password.";
-
-
-                var smtp = new SmtpClient
-                {
-                    Host = "smtp.office365.com",
-                    Port = 587,
-                    EnableSsl = true,
-                    DeliveryMethod = SmtpDeliveryMethod.Network,
-                    UseDefaultCredentials = false,
-                    Credentials = new NetworkCredential(fromEmail.Address, fromEmailPassword)
-
-                };
-
-                using (var message = new MailMessage(fromEmail, toEmail)
-                {
-                    Subject = subject,
-                    Body = body,
-                    IsBodyHtml = true
-                })
-                    smtp.Send(message);
-            }
-            else if (action == "confirmApt" && user != null)
-            {
-                var acceptUrl = "/Home/ConfirmApt?confirmCode=" + code;
-                var denyUrl = "/Home/DenyApt?denyCode=" + code;
-                var acceptLink = Request.Url.AbsoluteUri.Replace(Request.Url.PathAndQuery, acceptUrl);
-                var denyLink = Request.Url.AbsoluteUri.Replace(Request.Url.PathAndQuery, denyUrl);
-                //var fromEmail = new MailAddress("prepinseniorproject@gmail.com", "PrepIN Support");
-                //var toEmail = new MailAddress(email);
-                //var fromEmailPassword = "seniorproject20";
-                string subject = "Confirm Appointment";
-
-                string body = "</br> </br> You have a new appointment set up with a student. Click <a href='" + acceptLink + "'>here</a> to accept this appointment. Click <a href='" + denyLink + "'>here</a> to deny this appointment.";
-
-
-                var smtp = new SmtpClient
-                {
-                    Host = "smtp.office365.com",
-                    Port = 587,
-                    EnableSsl = true,
-                    DeliveryMethod = SmtpDeliveryMethod.Network,
-                    UseDefaultCredentials = false,
-                    Credentials = new NetworkCredential(fromEmail.Address, fromEmailPassword)
-
-                };
-
-                using (var message = new MailMessage(fromEmail, toEmail)
-                {
-                    Subject = subject,
-                    Body = body,
-                    IsBodyHtml = true
-                })
-                    smtp.Send(message);
-            }
+            
 
         }
+        [NonAction]
+        public void SendResetCodeEmail(string email, string code)
+        {
+           
+            var fromEmail = new MailAddress("prepinservice@outlook.com", "PrepIN Support");
+            var toEmail = new MailAddress(email);
+            string fromEmailPassword = "prepin2020";
+
+            string verifyUrl = "/Home/ResetPasswordCodeValidation?resetCode=" + code;
+            var link = Request.Url.AbsoluteUri.Replace(Request.Url.PathAndQuery, verifyUrl);
+            string subject = "Reset Password";
+
+            string body = "</br> </br> Here is the password reset email you requested. Click <a href='" + link + "'>here</a> to hange your password.";
+
+
+            var smtp = new SmtpClient
+            {
+                Host = "smtp.office365.com",
+                Port = 587,
+                EnableSsl = true,
+                DeliveryMethod = SmtpDeliveryMethod.Network,
+                UseDefaultCredentials = false,
+                Credentials = new NetworkCredential(fromEmail.Address, fromEmailPassword)
+
+            };
+
+            using (var message = new MailMessage(fromEmail, toEmail)
+            {
+                Subject = subject,
+                Body = body,
+                IsBodyHtml = true
+            })
+                smtp.Send(message);
+        }
+        public void SendConfirmAptEmail(string email, string code, UserModel user)
+        {
+            TestDatabaseEntities context = new TestDatabaseEntities();
+            string username = context.UserLogins.Where(x => x.UserID == user.UserID).FirstOrDefault().Username;
+            var fromEmail = new MailAddress("prepinservice@outlook.com", "PrepIN Support");
+            var toEmail = new MailAddress(email);
+            string fromEmailPassword = "prepin2020";
+
+            string acceptUrl = "/Home/ConfirmApt?confirmCode=" + code;
+            string denyUrl = "/Home/DenyApt?denyCode=" + code;
+            var acceptLink = Request.Url.AbsoluteUri.Replace(Request.Url.PathAndQuery, acceptUrl);
+            var denyLink = Request.Url.AbsoluteUri.Replace(Request.Url.PathAndQuery, denyUrl);
+  
+            string subject = "Confirm Appointment";
+
+            string body = "</br> </br> You have a new appointment set up with "+ username + ". Click <a href='" + acceptLink + "'>here</a> to accept this appointment. Click <a href='" + denyLink + "'>here</a> to deny this appointment.";
+
+
+            var smtp = new SmtpClient
+            {
+                Host = "smtp.office365.com",
+                Port = 587,
+                EnableSsl = true,
+                DeliveryMethod = SmtpDeliveryMethod.Network,
+                UseDefaultCredentials = false,
+                Credentials = new NetworkCredential(fromEmail.Address, fromEmailPassword)
+
+            };
+
+            using (var message = new MailMessage(fromEmail, toEmail)
+            {
+                Subject = subject,
+                Body = body,
+                IsBodyHtml = true
+            })
+                smtp.Send(message);
+
+        }
+
+
         [HttpGet]
         public ActionResult VerifyAccount(string activationCode)
         {
@@ -263,13 +275,16 @@ namespace TestWebApplication.Controllers
         {
             TestDatabaseEntities context = new TestDatabaseEntities();
             UserLogin user = context.UserLogins.Where(x => x.Username == User.Identity.Name).FirstOrDefault();
+            
             if (User.Identity.IsAuthenticated)
             {
+
                 UserModel model = new UserModel();
                 model.UserID = user.UserID;
                 model.UserGroupID = user.UserGroupID;
                 model.UserTypeID = user.UserTypeID;
                 model.HasAppointment = user.HasAppointment;
+                
                 if(user.UserGroupID != 1)
                 {
 
@@ -279,14 +294,19 @@ namespace TestWebApplication.Controllers
                 {
 
                     model.Appointments = context.Appointments.Where(x => x.StudentUserID == user.UserID).ToList();
+                    
                     if( model.UserGroupID == 1)
                     {
+                        int oppositeId = model.Appointments.FirstOrDefault().InstructorUserID;
                         model.AppointmentTime = context.GetStudentAppointmentTime(user.UserID).FirstOrDefault();
+                        model.WhoIsMyAptWith = context.GetUserNameFromID(oppositeId).ToString();
                     }
 
                     if (model.UserGroupID != 1)
                     {
+                        int oppositeId = model.Appointments.FirstOrDefault().StudentUserID;
                         model.AppointmentTime = context.GetInstructorAppointmentTime(user.UserID).FirstOrDefault();
+                        model.WhoIsMyAptWith = context.GetUserNameFromID(oppositeId).ToString();
                     }
                 }
                 if (user.HasAppointment == false && user.UserGroupID == 1)
@@ -365,7 +385,7 @@ namespace TestWebApplication.Controllers
             {
                 string resetCode = Guid.NewGuid().ToString();
                 context.AddPasswordResetCode(email, resetCode);
-                SendCodeEmail(email, resetCode, "reset", null);
+                SendResetCodeEmail(email, resetCode);
                 ViewBag.Message = "Password reset email sent to " + email;
             }
 
@@ -426,12 +446,14 @@ namespace TestWebApplication.Controllers
                     var confirmCode = Guid.NewGuid();
                     context.InsertAppointment(user.UserID, selection.InstructorUserID, selection.DateTime, confirmCode, selection.AvailabilityID);
 
-                    SendCodeEmail(instructor.Email, confirmCode.ToString(), "confirmApt", user);
+                    SendConfirmAptEmail(instructor.Email, confirmCode.ToString(), user);
                     ViewBag.Message = "You have successfully asked for an meeting with " + instructor.Username.ToString() + ". We will notify you when they have confirmed the appointment.";
+                    RedirectToAction("ProfilePage");
                 }
                 else
                 {
                     ViewBag.Message = "You have already signed up for an appointment.";
+                    RedirectToAction("ProfilePage");
                 }
             }
 
@@ -445,6 +467,7 @@ namespace TestWebApplication.Controllers
             var v = context.Appointments.Where(x => x.confirmCode == new Guid(confirmCode)).FirstOrDefault();
             var aptUser = context.UserLogins.Where(x => x.UserID == v.StudentUserID).FirstOrDefault();
             var instructor = context.UserLogins.Where(x => x.UserID == v.InstructorUserID).FirstOrDefault();
+            var availId = v.OriginalAvailID;
             if (v != null)
             {
                 context.ConfirmApt(v.AppointmentID, aptUser.UserID, instructor.UserID);
@@ -480,8 +503,8 @@ namespace TestWebApplication.Controllers
 
 
             ViewBag.Message = "You have successfully confirmed your appointment with " + aptUser.Username + ".";
-               // RemoveAvail(v.AppointmentID);
-                return RedirectToAction("RemoveAvail", new { id = v.OriginalAvailID});
+                context.DeleteAvail(availId);
+                return RedirectToAction("ProfilePage");
             }
             else
             {
@@ -499,12 +522,12 @@ namespace TestWebApplication.Controllers
             var instructor = context.UserLogins.Where(x => x.UserID == v.InstructorUserID).FirstOrDefault();
             if (v != null)
             {
-                context.DeleteApt(v.AppointmentID);
+                context.DeleteApt(v.AppointmentID, aptUser.UserID, instructor.UserID);
 
 
-                var fromEmail = new MailAddress("prepinseniorproject@gmail.com", "PrepIN Support");
+                var fromEmail = new MailAddress("prepinservice@outlook.com", "PrepIN Support");
                 var toEmail = new MailAddress(aptUser.Email);
-                var fromEmailPassword = "seniorproject20";
+                var fromEmailPassword = "prepin2020";
                 string subject = "Denial of Appointment";
 
                 string body = "</br> </br> Your appointment with " + instructor.Username.ToString() + " for " + v.Time.ToLongDateString() + " at " + v.Time.ToShortTimeString() + " was denyed. Please choose another time.";
@@ -512,7 +535,7 @@ namespace TestWebApplication.Controllers
 
                 var smtp = new SmtpClient
                 {
-                    Host = "smtp.gmail.com",
+                    Host = "smtp.outlook.com",
                     Port = 587,
                     EnableSsl = true,
                     DeliveryMethod = SmtpDeliveryMethod.Network,
@@ -542,11 +565,13 @@ namespace TestWebApplication.Controllers
 
         }
         [HttpGet]
-        public ActionResult CancelApt(int id)
+        public ActionResult CancelApt(int id, int studentUserId, int interviewerId)
         {
 
             TestDatabaseEntities context = new TestDatabaseEntities();
-            context.DeleteApt(id);
+            
+            context.DeleteApt(id, studentUserId, interviewerId);
+
             ViewBag.Message = "You have successfully canceled your appointment.";
 
             return RedirectToAction("ProfilePage");
