@@ -1,0 +1,208 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="https://numa.nz/uc/css/index.css">
+    <link rel="stylesheet" href="https://numa.nz/uc/css/login.css">
+    <link href="https://numa.nz/uc/vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://numa.nz/uc/vendor/fontawesome-free/css/all.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/simple-line-icons/2.4.1/css/simple-line-icons.css" rel="stylesheet" type="text/css">
+    <link href="https://fonts.googleapis.com/css?family=Lato:300,400,700,300italic,400italic,700italic" rel="stylesheet" type="text/css">
+    <link href="https://numa.nz/uc/css/landing-page.css" rel="stylesheet">
+    <title>@ViewBag.Title - Senior Design Project 2019</title>
+
+</head>
+<body>
+    @RenderBody()
+    <nav class="navbar navbar-light bg-dark static-top">
+        <div class="container">
+            <a class="navbar-brand" href="#"><img src="https://numa.nz/uc/img/logo.png"></a>
+            <a class="btn btn-primary" href="/Home/Login">Sign In</a>
+        </div>
+    </nav>
+
+    <header class="masthead text-white text-center">
+        <div class="overlay"></div>
+        <div class="container">
+            <div class="row">
+                <div class="col-xl-9 mx-auto">
+                    <h1 class="mb-5">PrepIn connects IT industry professionals to students!</h1>
+                </div>
+                <div class="col-md-10 col-lg-8 col-xl-7 mx-auto">
+                    <form action="/Home/createuser">
+                        <div class="form-row">
+                            <div class="col-12 col-md-12">
+                                <button type="submit" class="btn btn-block btn-lg btn-primary">Sign up!</button>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <section class="features-icons bg-dark text-center text-white">
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-4">
+                    <div class="features-icons-item mx-auto mb-5 mb-lg-0 mb-lg-3">
+                        <div class="features-icons-icon d-flex">
+                            <i class="icon-screen-desktop  m-auto text-primary"></i>
+                        </div>
+                        <h3>Online Interviews</h3>
+                        <p class="lead mb-0">PrepIn creates a mock interview between you and an IT industry professional!</p>
+                    </div>
+                </div>
+                <div class="col-lg-4">
+                    <div class="features-icons-item mx-auto mb-5 mb-lg-0 mb-lg-3">
+                        <div class="features-icons-icon d-flex">
+                            <i class="icon-layers m-auto text-primary"></i>
+                        </div>
+                        <h3>Interactive Blackboard</h3>
+                        <p class="lead mb-0">With live video chat and an interactive workspace, you and your instructor can work together in real time!</p>
+                    </div>
+                </div>
+                <div class="col-lg-4">
+                    <div class="features-icons-item mx-auto mb-0 mb-lg-3">
+                        <div class="features-icons-icon d-flex">
+                            <i class="icon-check m-auto text-primary"></i>
+                        </div>
+                        <h3>Easy to Use</h3>
+                        <p class="lead mb-0">PrepIn is easy and free to use for students!</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="showcase">
+        <div class="container-fluid p-0">
+            <div class="row no-gutters">
+
+                <div class="col-lg-6 order-lg-2 text-white showcase-img" style="background-image: url('https://numa.nz/uc/img/interview.jpg');"></div>
+                <div class="col-lg-6 order-lg-1 my-auto showcase-text">
+                    <h2>Welcome to PrepIn</h2>
+                    <p class="lead mb-0">
+                        PrepIn connects IT industry professionals to students looking to prepare for their first IT interview by creating a mock interview that simulates a real professional job interview.
+                    </p>
+                </div>
+            </div>
+            <div class="row no-gutters">
+                <div class="col-lg-6 text-white showcase-img" style="background-image: url('https://numa.nz/uc/img/coding.jpg');"></div>
+                <div class="col-lg-6 order-lg-1 my-auto showcase-text">
+                    <h2>PrepIn 2</h2>
+                    <p class="lead mb-0">Live video chatting with an industry professional simulates a face to face interview. Since the goal of PrepIn is to improve your interviewing skills, you can relax knowing that you will be given tips on how you can improve!</p>
+                </div>
+            </div>
+            <div class="row no-gutters">
+                <div class="col-lg-6 order-lg-2 text-white showcase-img" style="background-image: url('https://numa.nz/uc/img/python.jpg');"></div>
+                <div class="col-lg-6 order-lg-1 my-auto showcase-text">
+                    <h2>PrepIn 3</h2>
+                    <p class="lead mb-0">PrepIn provides help in multiple different areas of IT including Software Development, Cyber Security and Networking!</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="testimonials text-center bg-dark text-white">
+        <div class="container">
+            <h2 class="mb-5">PrepIn Team</h2>
+            <div class="row">
+                <div class="col-lg-4">
+                    <div class="testimonial-item mx-auto mb-5 mb-lg-0">
+                        <img class="img-fluid rounded-circle mb-3" src="#" alt="">
+                        <h5>Tyler Thomas</h5>
+                        <p class="font-weight-light mb-0">Software Developer</p>
+                    </div>
+                </div>
+                <div class="col-lg-4">
+                    <div class="testimonial-item mx-auto mb-5 mb-lg-0">
+                        <img class="img-fluid rounded-circle mb-3" src="#" alt="">
+                        <h5>David Ferdiny</h5>
+                        <p class="font-weight-light mb-0">Cyber Security/Company Manager</p>
+                    </div>
+                </div>
+                <div class="col-lg-4">
+                    <div class="testimonial-item mx-auto mb-5 mb-lg-0">
+                        <img class="img-fluid rounded-circle mb-3" src="#" alt="">
+                        <h5>Kyle Millsap</h5>
+                        <p class="font-weight-light mb-0">Front End UI/Network Engineer</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="call-to-action text-white text-center">
+        <div class="overlay"></div>
+        <div class="container">
+            <div class="row">
+                <div class="col-xl-9 mx-auto">
+                    <h2 class="mb-4">Ready to get started? Sign up now!</h2>
+                </div>
+                <div class="col-md-10 col-lg-8 col-xl-7 mx-auto">
+                    <form action="/Home/createuser">
+                        <div class="form-row">
+                            <div class="col-12 col-md-12">
+                                <button type="submit" class="btn btn-block btn-lg btn-primary">Sign up!</button>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <footer class="footer bg-dark text-white">
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-6 h-100 text-center text-lg-left my-auto">
+                    <ul class="list-inline mb-2">
+                        <li class="list-inline-item">
+                            <a href="#">About</a>
+                        </li>
+                        <li class="list-inline-item">&sdot;</li>
+                        <li class="list-inline-item">
+                            <a href="#">Contact</a>
+                        </li>
+                        <li class="list-inline-item">&sdot;</li>
+                        <li class="list-inline-item">
+                            <a href="#">Terms of Use</a>
+                        </li>
+                        <li class="list-inline-item">&sdot;</li>
+                        <li class="list-inline-item">
+                            <a href="#">Privacy Policy</a>
+                        </li>
+                    </ul>
+                    <p class="text-muted small mb-4 mb-lg-0">&copy; PrepIn 2019 - 2020. All Rights Reserved.</p>
+                </div>
+                <div class="col-lg-6 h-100 text-center text-lg-right my-auto">
+                    <ul class="list-inline mb-0">
+                        <li class="list-inline-item mr-3">
+                            <a href="#">
+                                <i class="fab fa-facebook fa-2x fa-fw"></i>
+                            </a>
+                        </li>
+                        <li class="list-inline-item mr-3">
+                            <a href="#">
+                                <i class="fab fa-twitter-square fa-2x fa-fw"></i>
+                            </a>
+                        </li>
+                        <li class="list-inline-item">
+                            <a href="#">
+                                <i class="fab fa-instagram fa-2x fa-fw"></i>
+                            </a>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <script src="https://numa.nz/uc/vendor/jquery/jquery.min.js"></script>
+    <script src="https://numa.nz/uc/vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
+
+</body>
+</html>
