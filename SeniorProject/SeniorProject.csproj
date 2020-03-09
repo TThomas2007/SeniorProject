@@ -448,6 +448,7 @@
     <Content Include="Views\Home\ResetPasswordCodeValidation.cshtml" />
     <Content Include="Views\Home\Availability.cshtml" />
     <Content Include="Views\Home\LiveInterview.cshtml" />
+    <Content Include="Views\Shared\_Layout_Vid.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
