@@ -8,33 +8,8 @@
 <html>
 <head>
     <meta name="viewport" content="width=device-width" />
+    <link rel="stylesheet" href="https://numa.nz/uc/css/login.css">
     <title>Login</title>
-    <style type="text/css">
-        body {
-            font-family: Arial;
-            font-size: 10pt;
-        }
-
-        table {
-            border: 1px solid #ccc;
-            border-collapse: collapse;
-        }
-
-            table th {
-                background-color: #F7F7F7;
-                color: #333;
-                font-weight: bold;
-            }
-
-            table th, table td {
-                padding: 5px;
-                border: 1px solid #ccc;
-            }
-
-        .error {
-            color: red;
-        }
-    </style>
 </head>
 <body>
     @using (Html.BeginForm("Login", "Home", FormMethod.Post))
@@ -81,7 +56,7 @@
             </tr>
 
         </table>
-        <input type="submit" value="Submit" />
+        <input type="submit" value="Submit" class="btn btn-lg btn-primary btn-block" />
     }
     <br />
     <p>Forgot your password? Click @Html.ActionLink("HERE", "ResetPassword", "Home")</p>
