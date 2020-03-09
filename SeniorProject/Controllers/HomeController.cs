@@ -92,7 +92,7 @@ namespace TestWebApplication.Controllers
         public void SendVerificationCodeEmail(string email, string code)
         {
             
-            var fromEmail = new MailAddress("prepinservice@outlook.com", "PrepIN Support");
+            var fromEmail = new MailAddress("support.prepin@numaplay.net", "PrepIN Support");
             var toEmail = new MailAddress(email);
            string fromEmailPassword = "prepin2020";
 
@@ -108,8 +108,8 @@ namespace TestWebApplication.Controllers
 
                 var smtp = new SmtpClient
                 {
-                    Host = "smtp.office365.com",
-                    Port = 587,
+                    Host = "167.88.166.189",
+                    Port = 465,
                     EnableSsl = true,
                     DeliveryMethod = SmtpDeliveryMethod.Network,
                     UseDefaultCredentials = false,
@@ -132,7 +132,7 @@ namespace TestWebApplication.Controllers
         public void SendResetCodeEmail(string email, string code)
         {
            
-            var fromEmail = new MailAddress("prepinservice@outlook.com", "PrepIN Support");
+            var fromEmail = new MailAddress("support.prepin@numaplay.net", "PrepIN Support");
             var toEmail = new MailAddress(email);
             string fromEmailPassword = "prepin2020";
 
@@ -145,8 +145,8 @@ namespace TestWebApplication.Controllers
 
             var smtp = new SmtpClient
             {
-                Host = "smtp.office365.com",
-                Port = 587,
+                Host = "167.88.166.189",
+                Port = 465,
                 EnableSsl = true,
                 DeliveryMethod = SmtpDeliveryMethod.Network,
                 UseDefaultCredentials = false,
@@ -166,7 +166,7 @@ namespace TestWebApplication.Controllers
         {
             TestDatabaseEntities context = new TestDatabaseEntities();
             string username = context.UserLogins.Where(x => x.UserID == user.UserID).FirstOrDefault().Username;
-            var fromEmail = new MailAddress("prepinservice@outlook.com", "PrepIN Support");
+            var fromEmail = new MailAddress("support.prepin@numaplay.net", "PrepIN Support");
             var toEmail = new MailAddress(email);
             string fromEmailPassword = "prepin2020";
 
@@ -182,8 +182,8 @@ namespace TestWebApplication.Controllers
 
             var smtp = new SmtpClient
             {
-                Host = "smtp.office365.com",
-                Port = 587,
+                Host = "167.88.166.189",
+                Port = 465,
                 EnableSsl = true,
                 DeliveryMethod = SmtpDeliveryMethod.Network,
                 UseDefaultCredentials = false,
@@ -473,7 +473,7 @@ namespace TestWebApplication.Controllers
                 context.ConfirmApt(v.AppointmentID, aptUser.UserID, instructor.UserID);
 
                 
-                var fromEmail = new MailAddress("prepinservice@outlook.com", "PrepIN Support");
+                var fromEmail = new MailAddress("support.prepin@numaplay.net", "PrepIN Support");
                 var toEmail = new MailAddress(aptUser.Email);
                 var fromEmailPassword = "prepin2020";
                 string subject = "Confirmation of Appointment";
@@ -483,8 +483,8 @@ namespace TestWebApplication.Controllers
 
                 var smtp = new SmtpClient
                 {
-                    Host = "smtp.outlook.com",
-                    Port = 587,
+                    Host = "167.88.166.189",
+                    Port = 465,
                     EnableSsl = true,
                     DeliveryMethod = SmtpDeliveryMethod.Network,
                     UseDefaultCredentials = false,
@@ -525,7 +525,7 @@ namespace TestWebApplication.Controllers
                 context.DeleteApt(v.AppointmentID, aptUser.UserID, instructor.UserID);
 
 
-                var fromEmail = new MailAddress("prepinservice@outlook.com", "PrepIN Support");
+                var fromEmail = new MailAddress("support.prepin@numaplay.net", "PrepIN Support");
                 var toEmail = new MailAddress(aptUser.Email);
                 var fromEmailPassword = "prepin2020";
                 string subject = "Denial of Appointment";
@@ -535,8 +535,8 @@ namespace TestWebApplication.Controllers
 
                 var smtp = new SmtpClient
                 {
-                    Host = "smtp.outlook.com",
-                    Port = 587,
+                    Host = "167.88.166.189",
+                    Port = 465,
                     EnableSsl = true,
                     DeliveryMethod = SmtpDeliveryMethod.Network,
                     UseDefaultCredentials = false,
