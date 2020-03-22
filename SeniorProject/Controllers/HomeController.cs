@@ -108,7 +108,7 @@ namespace TestWebApplication.Controllers
 
                 var smtp = new SmtpClient
                 {
-                    Host = "167.88.166.189",
+                    Host = "echo.mxrouting.net",
                     Port = 465,
                     EnableSsl = true,
                     DeliveryMethod = SmtpDeliveryMethod.Network,
@@ -145,7 +145,7 @@ namespace TestWebApplication.Controllers
 
             var smtp = new SmtpClient
             {
-                Host = "167.88.166.189",
+                Host = "echo.mxrouting.net",
                 Port = 465,
                 EnableSsl = true,
                 DeliveryMethod = SmtpDeliveryMethod.Network,
@@ -182,7 +182,7 @@ namespace TestWebApplication.Controllers
 
             var smtp = new SmtpClient
             {
-                Host = "167.88.166.189",
+                Host = "echo.mxrouting.net",
                 Port = 465,
                 EnableSsl = true,
                 DeliveryMethod = SmtpDeliveryMethod.Network,
@@ -483,7 +483,7 @@ namespace TestWebApplication.Controllers
 
                 var smtp = new SmtpClient
                 {
-                    Host = "167.88.166.189",
+                    Host = "echo.mxrouting.net",
                     Port = 465,
                     EnableSsl = true,
                     DeliveryMethod = SmtpDeliveryMethod.Network,
@@ -535,7 +535,7 @@ namespace TestWebApplication.Controllers
 
                 var smtp = new SmtpClient
                 {
-                    Host = "167.88.166.189",
+                    Host = "echo.mxrouting.net",
                     Port = 465,
                     EnableSsl = true,
                     DeliveryMethod = SmtpDeliveryMethod.Network,
