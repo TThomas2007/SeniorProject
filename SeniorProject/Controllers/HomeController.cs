@@ -108,8 +108,8 @@ namespace TestWebApplication.Controllers
 
                 var smtp = new SmtpClient
                 {
-                    Host = "167.88.166.189",
-                    Port = 465,
+                    Host = "lv-shared04.cpanelplatform.com",
+                    Port = 587,
                     EnableSsl = true,
                     DeliveryMethod = SmtpDeliveryMethod.Network,
                     UseDefaultCredentials = false,
@@ -145,8 +145,8 @@ namespace TestWebApplication.Controllers
 
             var smtp = new SmtpClient
             {
-                Host = "167.88.166.189",
-                Port = 465,
+                Host = "lv-shared04.cpanelplatform.com",
+                Port = 587,
                 EnableSsl = true,
                 DeliveryMethod = SmtpDeliveryMethod.Network,
                 UseDefaultCredentials = false,
@@ -182,8 +182,8 @@ namespace TestWebApplication.Controllers
 
             var smtp = new SmtpClient
             {
-                Host = "167.88.166.189",
-                Port = 465,
+                Host = "lv-shared04.cpanelplatform.com",
+                Port = 587,
                 EnableSsl = true,
                 DeliveryMethod = SmtpDeliveryMethod.Network,
                 UseDefaultCredentials = false,
@@ -483,8 +483,8 @@ namespace TestWebApplication.Controllers
 
                 var smtp = new SmtpClient
                 {
-                    Host = "167.88.166.189",
-                    Port = 465,
+                    Host = "lv-shared04.cpanelplatform.com",
+                    Port = 587,
                     EnableSsl = true,
                     DeliveryMethod = SmtpDeliveryMethod.Network,
                     UseDefaultCredentials = false,
@@ -535,8 +535,8 @@ namespace TestWebApplication.Controllers
 
                 var smtp = new SmtpClient
                 {
-                    Host = "167.88.166.189",
-                    Port = 465,
+                    Host = "lv-shared04.cpanelplatform.com",
+                    Port = 587,
                     EnableSsl = true,
                     DeliveryMethod = SmtpDeliveryMethod.Network,
                     UseDefaultCredentials = false,
