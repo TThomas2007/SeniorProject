@@ -1,34 +1,38 @@
 ﻿
 
-/*#videos {
+#main {
+    background: blue;
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+}
+
+#videos {
     position: relative;
     width: 100%;
     height: 100%;
     margin-left: auto;
     margin-right: auto;
-}*/
+}
 
 #subscriber {
-    
     width: 360px;
     height: 240px;
-    bottom: 10px;
-    left: 10px;
-    z-index: 100;
-    border: 3px solid blue;
+    /*bottom: 10px;
+    left: 10px;*/
+    border: 3px solid white;
     border-radius: 3px;
 }
 
 #publisher {
-    
     width: 360px;
     height: 240px;
-    bottom: 10px;
-    right: 10px;
-    z-index: 100;
+    /*bottom: 10px;
+    right: 10px;*/
     border: 3px solid orange;
     border-radius: 3px;
 }
+
 #textchat {
     position: relative;
     width: 20%;
@@ -39,13 +43,13 @@
 
 #history {
     width: 100%;
-    height: calc(100% - 40px);
+    height: 40px;
     overflow: auto;
 }
 
 input#msgTxt {
     height: 40px;
-    position: absolute;
+    position: relative;
     bottom: 0;
     width: 100%;
 }
